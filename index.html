@@ -521,12 +521,12 @@ footer{
       <a href="#why">why rune</a>
       <a href="#cli">cli</a>
       <a href="#vaultapp">vault app</a>
-      <a href="https://github.com" target="_blank">github</a>
+      <a href="https://github.com/hyphen-ani/rune" target="_blank">github</a>
       <a href="#" target="_blank">docs</a>
     </div>
     <div class="nav-right">
-      <a href="https://github.com" target="_blank" class="btn-sm">★ star</a>
-      <a href="#getstarted" class="btn-sm solid">get started →</a>
+      <a href="https://github.com/hyphen-ani/rune" target="_blank" class="btn-sm">★ star</a>
+      <a href="https://github.com/hyphen-ani/rune" class="btn-sm solid">get started →</a>
     </div>
   </div>
 </nav>
@@ -538,7 +538,7 @@ footer{
 
       <!-- LEFT -->
       <div class="hero-left">
-        <div class="badge"><div class="badge-dot"></div>v0.9.0 — public beta</div>
+        <div class="badge"><div class="badge-dot"></div>v0.2.0 — public beta</div>
         <h1 class="hero-h1">secure secrets.<br><em>locally.</em> simply.</h1>
         <p class="hero-p">Rune is an open-source secrets manager built for developers who want full control. No cloud. No vendor lock-in. AES-GCM encryption with Argon2 key derivation — on your machine.</p>
 
@@ -550,10 +550,10 @@ footer{
           </div>
           <div class="inst-body">
             <span class="inst-prompt">$</span>
-            <span class="inst-cmd-text" id="install-cmd">Public Beta Coming Soon</span>
+            <span class="inst-cmd-text" id="install-cmd">curl -fsSL https://raw.githubusercontent.com/hyphen-ani/rune/main/scripts/install.sh | sh</span>
             <button class="copy-btn" id="copy-hero" onclick="doCopy('install-cmd','copy-hero')">copy</button>
           </div>
-          <div class="inst-note"># or: Public Beta Coming Soon</div>
+          <div class="inst-note"># or: Homebrew Package Coming Soon</div>
         </div>
 
         <div class="hero-links">
@@ -932,9 +932,9 @@ async function cliTerm() {
 
 /* ── OS TOGGLE ── */
 const cmdMap = {
-  mac: 'Public Beta Coming Soon on macOS | sh',
-  linux: 'Public Beta Coming Soon on Linux | sh',
-  windows: 'Public Beta Coming Soon on Windows | sh'
+  mac: 'curl -fsSL https://raw.githubusercontent.com/hyphen-ani/rune/main/scripts/install.sh | sh',
+  linux: 'curl -fsSL https://raw.githubusercontent.com/hyphen-ani/rune/main/scripts/install.sh | sh',
+  windows: 'Public Beta Coming Soon on Windows'
 };
 
 function swOS(os, btn, textId, copyId) {
