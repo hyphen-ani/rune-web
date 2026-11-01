@@ -26,7 +26,7 @@
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const rand = (n, set = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789') =>
-    Array.from({ length: n }, () => set[(Math.random() * set.length) | 0]).join('');
+      Array.from({ length: n }, () => set[(Math.random() * set.length) | 0]).join('');
   const hex = (n) => rand(n, '0123456789abcdef');
   const iso = (d) => d.toISOString().slice(0, 19) + 'Z';
   const hms = (d) => d.toTimeString().slice(0, 8);
@@ -663,7 +663,7 @@
     if (evt && evt.type === 'put' && evt.ns !== ui.ns) { ui.ns = evt.ns; ui.view = 'secrets'; }   // follow terminal activity
 
     ui.nsNav.innerHTML = Object.keys(S.ns).map((n) =>
-      `<button type="button" class="${ui.view === 'secrets' && n === ui.ns ? 'on' : ''}" data-ns="${esc(n)}">${esc(n)} <em>${S.sealed ? '·' : Object.keys(S.ns[n]).length}</em></button>`).join('');
+        `<button type="button" class="${ui.view === 'secrets' && n === ui.ns ? 'on' : ''}" data-ns="${esc(n)}">${esc(n)} <em>${S.sealed ? '·' : Object.keys(S.ns[n]).length}</em></button>`).join('');
     $$('.ui-link[data-view]').forEach((b) => b.classList.toggle('on', b.dataset.view === ui.view));
     ui.tok.textContent = S.sealed ? '·' : S.tokens.filter((t) => !t.revoked).length;
     ui.aud.textContent = S.sealed ? '·' : S.audit.length;
@@ -903,15 +903,15 @@
   const hero = $('.hero');
   const heroWords = splitWords($('.hero-title'));
   G.timeline({ defaults: { ease: 'power4.out' } })
-    .set('.hero-title', { autoAlpha: 1 })
-    .from('.site-header', { yPercent: -100, duration: .7 })
-    .from('.hero .cross', { scale: 0, rotation: 90, duration: .6, stagger: .06 }, '<.1')
-    .fromTo($$('[data-anim]', hero).filter((e) => e.classList.contains('release-chip')), { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: .6 }, '<.1')
-    .from(heroWords, { yPercent: 115, duration: 1, stagger: .06 }, '<.1')
-    .fromTo($$('.hero-copy [data-anim]').filter((e) => !e.classList.contains('release-chip')), { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: .8, stagger: .08 }, '-=.6')
-    .fromTo('.specimen', { autoAlpha: 0, y: 40, rotate: 1.5 }, { autoAlpha: 1, y: 0, rotate: 0, duration: 1.1 }, '-=.9')
-    .from('.spec-row', { autoAlpha: 0, x: -10, stagger: .06, duration: .5 }, '-=.6')
-    .from('.ticker', { autoAlpha: 0, duration: .6 }, '-=.4');
+      .set('.hero-title', { autoAlpha: 1 })
+      .from('.site-header', { yPercent: -100, duration: .7 })
+      .from('.hero .cross', { scale: 0, rotation: 90, duration: .6, stagger: .06 }, '<.1')
+      .fromTo($$('[data-anim]', hero).filter((e) => e.classList.contains('release-chip')), { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: .6 }, '<.1')
+      .from(heroWords, { yPercent: 115, duration: 1, stagger: .06 }, '<.1')
+      .fromTo($$('.hero-copy [data-anim]').filter((e) => !e.classList.contains('release-chip')), { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: .8, stagger: .08 }, '-=.6')
+      .fromTo('.specimen', { autoAlpha: 0, y: 40, rotate: 1.5 }, { autoAlpha: 1, y: 0, rotate: 0, duration: 1.1 }, '-=.9')
+      .from('.spec-row', { autoAlpha: 0, x: -10, stagger: .06, duration: .5 }, '-=.6')
+      .from('.ticker', { autoAlpha: 0, duration: .6 }, '-=.4');
 
   if (!ST) { $$('[data-anim],[data-stagger]').forEach((el) => G.set(el, { autoAlpha: 1 })); return; }
 
@@ -955,8 +955,8 @@
     tl.to(prog, { strokeDashoffset: 0, ease: 'none', duration: 4 }, 0);
     [0.15, 1.05, 2.05, 3.3].forEach((t, i) => tl.to(nodes[i], { autoAlpha: 1, scale: 1, duration: .35, ease: 'back.out(3)' }, t));
     tl.to(branch, { strokeDashoffset: 0, ease: 'none', duration: 1 }, 3.4)
-      .to(branch, { strokeDasharray: '5 5', duration: .01 }, 4.4)
-      .to(nodes[4], { autoAlpha: 1, scale: 1, duration: .35, ease: 'back.out(3)' }, 4.2);
+        .to(branch, { strokeDasharray: '5 5', duration: .01 }, 4.4)
+        .to(nodes[4], { autoAlpha: 1, scale: 1, duration: .35, ease: 'back.out(3)' }, 4.2);
   }
 
   // RBAC map
@@ -967,11 +967,11 @@
     const cold = $$('.s-edges path:not(.hot)', svg);
     hot.forEach((p) => { const L = p.getTotalLength(); G.set(p, { strokeDasharray: L, strokeDashoffset: L }); });
     G.timeline({ scrollTrigger: { trigger: map, start: 'top 75%' } })
-      .from($$('.s-node', svg), { autoAlpha: 0, y: 8, stagger: .05, duration: .4, ease: 'power2.out' })
-      .from(cold, { autoAlpha: 0, duration: .4 }, '<.2')
-      .to(hot, { strokeDashoffset: 0, duration: .9, stagger: .15, ease: 'power2.inOut' }, '-=.2')
-      .from('.s-perm text', { autoAlpha: 0, y: 4, duration: .4 }, '-=.4')
-      .from('.s-deny text', { autoAlpha: 0, y: 4, stagger: .15, duration: .4 }, '-=.3');
+        .from($$('.s-node', svg), { autoAlpha: 0, y: 8, stagger: .05, duration: .4, ease: 'power2.out' })
+        .from(cold, { autoAlpha: 0, duration: .4 }, '<.2')
+        .to(hot, { strokeDashoffset: 0, duration: .9, stagger: .15, ease: 'power2.inOut' }, '-=.2')
+        .from('.s-perm text', { autoAlpha: 0, y: 4, duration: .4 }, '-=.4')
+        .from('.s-deny text', { autoAlpha: 0, y: 4, stagger: .15, duration: .4 }, '-=.3');
 
     const NS = 'http://www.w3.org/2000/svg';
     const routes = ['M80 165 H300 C340 165 340 120 380 120 H444', 'M80 165 H300 C340 165 340 210 380 210 H444'].map((d) => {
@@ -990,10 +990,10 @@
     const travel = G.timeline({ repeat: -1, paused: true, repeatDelay: .4 });
     [0, 1].forEach((r) => {
       travel.set(proxy, { r, t: 0, onComplete: place })
-        .fromTo(packet, { autoAlpha: 0 }, { autoAlpha: 1, duration: .15 })
-        .to(proxy, { t: 1, duration: 1.6, ease: 'power1.inOut', onUpdate: place })
-        .to(packet, { autoAlpha: 0, duration: .2 })
-        .fromTo($$('.s-node.leaf.hot rect', svg)[r], { fill: '#f3c9bf' }, { fill: '#fbefec', duration: .8 }, '<');
+          .fromTo(packet, { autoAlpha: 0 }, { autoAlpha: 1, duration: .15 })
+          .to(proxy, { t: 1, duration: 1.6, ease: 'power1.inOut', onUpdate: place })
+          .to(packet, { autoAlpha: 0, duration: .2 })
+          .fromTo($$('.s-node.leaf.hot rect', svg)[r], { fill: '#f3c9bf' }, { fill: '#fbefec', duration: .8 }, '<');
     });
     ST.create({ trigger: map, start: 'top 80%', end: 'bottom top', onToggle: (s) => (s.isActive ? travel.play() : travel.pause()) });
   }
@@ -1008,7 +1008,7 @@
     const loop = G.timeline({ repeat: -1, repeatDelay: .8, paused: true });
     nodes.forEach((n, i) => {
       loop.to(pk, { y: () => yOf(n), duration: i ? .7 : .01, ease: 'power2.inOut' })
-        .add(() => { nodes.forEach((m, j) => m.classList.toggle('lit', j === i)); });
+          .add(() => { nodes.forEach((m, j) => m.classList.toggle('lit', j === i)); });
       loop.to({}, { duration: .55 });
     });
     loop.add(() => nodes.forEach((m) => m.classList.remove('lit')));

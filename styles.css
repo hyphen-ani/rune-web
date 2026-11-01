@@ -36,8 +36,8 @@ body {
   margin: 0;
   background-color: var(--bg);
   background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: var(--cell) var(--cell);
   background-position: center top;
   color: var(--ink);
@@ -62,12 +62,12 @@ code, pre { font-family: var(--mono); }
 .grid-spot {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background-image:
-    linear-gradient(rgba(203, 80, 61, .22) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(203, 80, 61, .22) 1px, transparent 1px);
+          linear-gradient(rgba(203, 80, 61, .22) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(203, 80, 61, .22) 1px, transparent 1px);
   background-size: var(--cell) var(--cell);
   background-position: center top;
   -webkit-mask-image: radial-gradient(circle 220px at var(--mx, -500px) var(--my, -500px), #000 0%, transparent 100%);
-          mask-image: radial-gradient(circle 220px at var(--mx, -500px) var(--my, -500px), #000 0%, transparent 100%);
+  mask-image: radial-gradient(circle 220px at var(--mx, -500px) var(--my, -500px), #000 0%, transparent 100%);
   opacity: 0; transition: opacity .4s;
 }
 body.has-pointer .grid-spot { opacity: 1; }
@@ -108,7 +108,7 @@ body.has-pointer .grid-spot { opacity: 1; }
   position: sticky; top: 0; z-index: 50;
   background: rgba(255, 255, 255, .82);
   -webkit-backdrop-filter: saturate(1.4) blur(10px);
-          backdrop-filter: saturate(1.4) blur(10px);
+  backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--line);
 }
 .header-inner { height: 64px; display: flex; align-items: center; gap: 28px; padding: 0 var(--pad); }
