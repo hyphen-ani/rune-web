@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Rune — Open Source Secrets Manager</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rune — Secrets management, without the ceremony.</title>
+<meta name="description" content="Rune is an open-source, developer-first secrets manager. Encrypted storage, seal/unseal, namespaces, scoped tokens, rotation and versioning — from the CLI or the built-in Web UI. v1.0.0-RC is live." />
+<meta name="theme-color" content="#ffffff" />
+
+<meta property="og:title" content="Rune — Secrets management, without the ceremony." />
+<meta property="og:description" content="Open-source secrets manager for the CLI and the browser. v1.0.0-RC is live." />
+<meta property="og:type" content="website" />
+
+<link rel="icon" type="image/png" href="assets/logo-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -346,7 +354,41 @@
     </div>
   </section>
 
-<hr class="h-rule">
+  <!-- ═════════════════════════ 04 · SCOPED ═════════════════════════ -->
+  <section class="section rail" id="scoped">
+    <header class="sec-head">
+      <p class="sec-idx"><span>04</span> / token rbac</p>
+      <h2 class="sec-title" data-split>Not every token deserves<br><span class="accent">the keys to the kingdom.</span></h2>
+      <p class="sec-lede" data-anim="fade">Token RBAC, one flag at a time: <code class="inl">read</code>, <code class="inl">write</code>, <code class="inl">delete</code>, <code class="inl">rotate</code> — per namespace, per token. Give tokens an expiry, give services their own identity, and let the audit log remember who did what. No 40-line policy file required.</p>
+    </header>
+
+    <div class="split">
+      <div class="scope-map" id="scopeMap" aria-hidden="true">
+        <svg viewBox="0 0 520 330" class="scope-svg">
+          <g class="s-edges">
+            <path d="M80 165 C 140 165, 140 70, 200 70"/>
+            <path class="hot" d="M80 165 H 200"/>
+            <path d="M80 165 C 140 165, 140 260, 200 260"/>
+            <path class="hot" d="M300 165 C 340 165, 340 120, 380 120"/>
+            <path class="hot" d="M300 165 C 340 165, 340 210, 380 210"/>
+            <path d="M300 70 H 380"/>
+            <path d="M300 260 H 380"/>
+          </g>
+          <g class="s-nodes">
+            <g class="s-node token"><rect x="10" y="148" width="70" height="34" rx="3"/><text x="45" y="170">token</text></g>
+            <g class="s-node"><rect x="200" y="53" width="100" height="34" rx="3"/><text x="250" y="75">staging</text></g>
+            <g class="s-node hot"><rect x="200" y="148" width="100" height="34" rx="3"/><text x="250" y="170">production</text></g>
+            <g class="s-node"><rect x="200" y="243" width="100" height="34" rx="3"/><text x="250" y="265">default</text></g>
+            <g class="s-node leaf"><rect x="380" y="53" width="128" height="34" rx="3"/><text x="444" y="75">api-key</text></g>
+            <g class="s-node leaf hot"><rect x="380" y="103" width="128" height="34" rx="3"/><text x="444" y="125">db-password</text></g>
+            <g class="s-node leaf hot"><rect x="380" y="193" width="128" height="34" rx="3"/><text x="444" y="215">stripe-key</text></g>
+            <g class="s-node leaf"><rect x="380" y="243" width="128" height="34" rx="3"/><text x="444" y="265">smtp-pass</text></g>
+          </g>
+          <circle class="s-packet" r="5" cx="80" cy="165"/>
+          <g class="s-perm"><text x="140" y="157">read · rotate</text></g>
+          <g class="s-deny"><text x="250" y="30">403 · nope</text><text x="250" y="312">403 · also nope</text></g>
+        </svg>
+      </div>
 
       <div class="code-card" data-anim="rise">
         <div class="cc-head"><span>terminal</span><span class="dim">rbac.sh</span></div>
@@ -441,7 +483,13 @@
     </div>
   </section>
 
-<hr class="h-rule">
+  <!-- ═════════════════════════ 06 · JAVA SDK ═════════════════════════ -->
+  <section class="section rail" id="sdk">
+    <header class="sec-head">
+      <p class="sec-idx"><span>06</span> / java sdk</p>
+      <h2 class="sec-title" data-split>Secrets in your Spring app.<br><span class="accent">Not in application.yml.</span></h2>
+      <p class="sec-lede" data-anim="fade">The Rune Spring Boot starter pulls a namespace's secrets at startup and hands them to Spring as plain properties — <code class="inl">${rune.db-password}</code> resolves before your beans wake up. Need more control? Inject <code class="inl">RuneClient</code> and ask directly. Zero extra HTTP dependencies.</p>
+    </header>
 
     <div class="sdk">
       <div class="sdk-code" data-anim="rise">
@@ -689,7 +737,6 @@ make install</code></pre>
       <div><p>source</p><a href="https://github.com/runelock-io/rune" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener">Releases</a><a href="https://github.com/runelock-io/rune/issues" target="_blank" rel="noopener">Issues</a></div>
     </nav>
   </div>
-  <div class="rail f-mega" aria-hidden="true"><span>r</span><span>u</span><span>n</span><span>e</span></div>
   <div class="rail f-bottom">
     <span>© 2026 Rune · open source</span>
     <span class="f-status"><i></i>all secrets sealed</span>
