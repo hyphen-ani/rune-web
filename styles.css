@@ -642,3 +642,10 @@ button.ui-link.on { background: #fff; color: var(--ink); font-weight: 600; box-s
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ── docs links ── */
+.nav a.nav-docs { color: var(--accent); }
+.nav a.nav-docs::before, .nav a.nav-docs::after { opacity: 1; }
+.more-link { display: block; padding: 12px 16px; border-top: 1px solid var(--line); font: 500 12.5px/1 var(--mono); color: var(--accent-ink); background: var(--paper); }
+.more-link:hover { background: var(--accent-soft); }
+.sdk-more { border: 1px dashed var(--accent); margin-left: 44px; background: var(--accent-soft); }

@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Docs — Rune</title>
+<meta name="description" content="Rune documentation: install, the CLI, rune-server, the Web UI, token RBAC, the HTTP API and the Java SDK." />
+<meta name="theme-color" content="#ffffff" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="docs.css" />
+</head>
+<body class="docs-body">
+
+<a class="skip-link" href="#docMain">Skip to content</a>
+
+<!-- ═════════════════════════ TOP BAR ═════════════════════════ -->
+<header class="d-top">
+  <div class="d-top-inner">
+    <button class="d-burger" id="dBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="dSide"><span></span><span></span></button>
+    <a class="d-brand" href="index.html" aria-label="Rune home">
+      <img src="assets/rune-black.png" alt="rune" width="72" height="33" />
+      <span class="d-brand-tag">docs</span>
+    </a>
+
+    <button class="d-search" id="dSearchBtn" type="button" aria-label="Search the docs">
+      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Search docs…</span>
+      <kbd>⌘K</kbd>
+    </button>
+
+    <nav class="d-top-links" aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="index.html#demo">Live demo</a>
+      <a href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener">Releases</a>
+    </nav>
+    <a class="ver-pill" href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener"><span class="pulse"></span>v1.0.0-RC</a>
+    <a class="btn btn-ink btn-sm d-gh" href="https://github.com/runelock-io/rune" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+      <span>GitHub</span>
+    </a>
+  </div>
+  <nav class="d-tabs" id="dTabs" aria-label="Doc sections"></nav>
+</header>
+
+<div class="d-shell">
+  <aside class="d-side" id="dSide" aria-label="Documentation">
+    <nav id="dNav"></nav>
+    <div class="d-side-foot">
+      <a href="https://github.com/runelock-io/rune/issues" target="_blank" rel="noopener">Found a bug? Open an issue →</a>
+    </div>
+  </aside>
+  <div class="d-scrim" id="dScrim"></div>
+
+  <main class="d-main" id="docMain" tabindex="-1">
+    <div class="d-content" id="dContent">
+
+<!-- ═══════════════════════════════════════════════════════════
+     GET STARTED
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="introduction" data-group="Get started" data-title="Introduction" data-desc="What Rune is and how the pieces fit together.">
+  <h1>Introduction</h1>
+  <p class="lede">Rune is an open-source, local-first secrets manager. It encrypts your secrets, keeps them sealed until you say otherwise, and hands them out to exactly the tokens you allow — from a CLI, a Web UI, an HTTP API or straight into a Spring Boot app.</p>
+
+  <div class="d-hero-art" aria-hidden="true">
+    <div class="ha-node">rune <small>CLI</small></div>
+    <div class="ha-node">Web UI <small>/ui/</small></div>
+    <div class="ha-node">Java SDK <small>Spring Boot</small></div>
+    <div class="ha-wire"></div>
+    <div class="ha-core">rune-server <small>:2710 · sealed by default</small></div>
+    <div class="ha-wire"></div>
+    <div class="ha-db">~/.rune/rune.db <small>AES-256-GCM · bbolt</small></div>
+  </div>
+
+  <h2>The components</h2>
+  <div class="cards">
+    <a class="card" href="#/rune-server"><span class="card-ico" data-i="server"></span><b>rune-server</b><span>The vault itself. Stores encrypted secrets, serves the HTTP API and the Web UI on port 2710.</span></a>
+    <a class="card" href="#/cli-overview"><span class="card-ico" data-i="terminal"></span><b>rune CLI</b><span>Put, get, rotate and inspect secrets. Manage namespaces and tokens.</span></a>
+    <a class="card" href="#/web-ui"><span class="card-ico" data-i="window"></span><b>Web UI</b><span>The same vault in your browser, served by rune-server at <code>/ui/</code>.</span></a>
+    <a class="card" href="#/sdk-spring-boot"><span class="card-ico" data-i="java"></span><b>Java SDK</b><span>A Spring Boot starter that turns secrets into <code>${rune.*}</code> properties.</span></a>
+    <a class="card" href="#/api-overview"><span class="card-ico" data-i="api"></span><b>HTTP API</b><span>Everything the CLI and UI do, over plain HTTP with a bearer token.</span></a>
+    <a class="card" href="#/k8s-preview"><span class="card-ico" data-i="k8s"></span><b>Kubernetes <em>next</em></b><span>Secret mapping and an auto injector, landing in the next release.</span></a>
+  </div>
+
+  <h2>Why Rune?</h2>
+  <p>Most teams don't need a secrets <em>platform</em>. They need somewhere better than <code>.env</code> files, Slack DMs and CI variables nobody remembers setting. Rune is a single pair of binaries you can run on a laptop or a VM:</p>
+  <ul>
+    <li><b>Encrypted by default.</b> Every secret is encrypted with AES-256-GCM before it touches disk.</li>
+    <li><b>Sealed by default.</b> The encryption key only lives in memory after you unseal with your passphrase.</li>
+    <li><b>Least privilege.</b> Tokens get <code>read</code>, <code>write</code>, <code>delete</code> and <code>rotate</code> per namespace — nothing more.</li>
+    <li><b>History you can trust.</b> Rotations create new versions; old ones stay encrypted and fetchable.</li>
+    <li><b>Boring infrastructure.</b> One embedded database file. No cluster, no consensus protocol, no ops team.</li>
+  </ul>
+
+  <div class="callout tip"><p><b>Five minutes, start to finish.</b> The <a href="#/quickstart">Quickstart</a> takes you from install to your first secret in a Spring app.</p></div>
+</article>
+
+<article class="doc" data-slug="quickstart" data-group="Get started" data-title="Quickstart" data-desc="Install Rune, start the vault, store and read your first secret.">
+  <h1>Quickstart</h1>
+  <p class="lede">From zero to an unsealed vault with your first secret. You'll need macOS or Linux and a terminal.</p>
+
+  <ol class="steps">
+    <li>
+      <h3>Install the binaries</h3>
+      <p>The install script detects your OS and architecture and drops <code>rune</code> and <code>rune-server</code> into <code>/usr/local/bin</code>.</p>
+<pre data-title="terminal"><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/runelock-io/rune/main/scripts/install.sh | sh
+rune --version</code></pre>
+    </li>
+    <li>
+      <h3>Start the server and set a passphrase</h3>
+      <p>On first run, <code>rune-server</code> creates the vault at <code>~/.rune/rune.db</code>, asks for a passphrase and prints a <b>root token</b>. The token is shown once and is never stored in plain text — copy it now.</p>
+<pre data-title="terminal"><code class="language-bash">rune-server</code></pre>
+<pre data-title="output" class="out"><code class="language-text">Set A Passphrase (Required For Sealing and Unsealing):
+
+  ────────────────────────────────────────────────────────────────────────
+  root token
+  ────────────────────────────────────────────────────────────────────────
+
+  3f9c0e…(64 hex characters)…a17d
+
+  ────────────────────────────────────────────────────────────────────────
+  shown once  ·  not stored  ·  full vault access
+  ────────────────────────────────────────────────────────────────────────
+
+  rune  local-first secrets vault
+
+  ➜  api    http://localhost:2710
+  ➜  ui     http://localhost:2710/ui/
+  ➜  db     /Users/you/.rune/rune.db
+
+  ⬡  vault sealed  —  run rune unseal or open the web UI</code></pre>
+      <div class="callout warn"><p>Lose the passphrase and the vault can't be unsealed. There is no recovery path — that's the point. Put it in your password manager.</p></div>
+    </li>
+    <li>
+      <h3>Log in and unseal</h3>
+      <p>Leave the server running and open a second terminal.</p>
+<pre data-title="terminal"><code class="language-bash">rune login &lt;root-token&gt;
+rune unseal          # prompts for the passphrase, input hidden
+rune status</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ Token saved successfully
+Enter passphrase:
+✔ Vault Unsealed Successfully
+🔓 Vault is Unsealed</code></pre>
+    </li>
+    <li>
+      <h3>Store and read a secret</h3>
+<pre data-title="terminal"><code class="language-bash">rune put db-password 'hunter2-but-longer'
+rune get db-password</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ Secret Stored Successfully
+[SECRET] hunter2-but-longer
+✔ Secret retrieved</code></pre>
+    </li>
+    <li>
+      <h3>Give your app its own token</h3>
+      <p>Never ship the root token. Create a namespace and a token that can only read it:</p>
+<pre data-title="terminal"><code class="language-bash">rune namespace create production
+rune put db-password 'hunter2-but-longer' -n production
+rune token create payments-api -n production:read</code></pre>
+      <p>Then plug that token into the <a href="#/sdk-spring-boot">Java SDK</a> or call the <a href="#/api-secrets">HTTP API</a> directly.</p>
+    </li>
+  </ol>
+
+  <div class="callout note"><p>Prefer clicking? Everything above also works in the <a href="#/web-ui">Web UI</a> at <code>http://localhost:2710/ui/</code>.</p></div>
+</article>
+
+<article class="doc" data-slug="installation" data-group="Get started" data-title="Installation" data-desc="Install script, release binaries, building from source.">
+  <h1>Installation</h1>
+  <p class="lede">Rune ships as two binaries: <code>rune</code> (the CLI) and <code>rune-server</code> (the vault, API and Web UI). Both are built for <b>darwin</b> and <b>linux</b> on <b>amd64</b> and <b>arm64</b>.</p>
+
+  <h2>Install script</h2>
+  <p>Recommended. Downloads the <code>v1.0.0-RC</code> release for your platform and moves both binaries to <code>/usr/local/bin</code> (uses <code>sudo</code>).</p>
+  <div class="code-group">
+<pre data-tab="macOS"><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/runelock-io/rune/main/scripts/install.sh | sh</code></pre>
+<pre data-tab="Linux"><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/runelock-io/rune/main/scripts/install.sh | sh</code></pre>
+  </div>
+<pre data-title="output" class="out"><code class="language-text">Detected OS: darwin
+Detected ARCH: arm64
+Downloading Rune...
+Installing Rune...
+
+Rune installed successfully
+
+Run:
+  rune --version
+  rune-server</code></pre>
+
+  <h2>Release binaries</h2>
+  <p>Grab them yourself from <a href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener">GitHub Releases</a>. Assets are named <code>rune_&lt;os&gt;_&lt;arch&gt;</code> and <code>rune-server_&lt;os&gt;_&lt;arch&gt;</code>.</p>
+<pre data-title="terminal"><code class="language-bash">VERSION=v1.0.0-RC OS=darwin ARCH=arm64   # OS: darwin|linux  ARCH: amd64|arm64
+BASE=https://github.com/runelock-io/rune/releases/download/$VERSION
+
+curl -L $BASE/rune_${OS}_${ARCH} -o rune
+curl -L $BASE/rune-server_${OS}_${ARCH} -o rune-server
+chmod +x rune rune-server
+sudo mv rune rune-server /usr/local/bin/</code></pre>
+
+  <h2>From source</h2>
+  <p>Requires Go (see <code>go.mod</code>) and Node.js — the Web UI is built with Vite and embedded into <code>rune-server</code>.</p>
+<pre data-title="terminal"><code class="language-bash">git clone https://github.com/runelock-io/rune.git
+cd rune
+make install        # builds ui/, then bin/rune and bin/rune-server, copies to /usr/local/bin</code></pre>
+  <table class="ref">
+    <thead><tr><th>Make target</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>make cli-build</code></td><td>Builds <code>bin/rune</code> from <code>./cmd/cli</code></td></tr>
+      <tr><td><code>make server-build</code></td><td>Builds the Web UI, then <code>bin/rune-server</code> from <code>./cmd/server</code></td></tr>
+      <tr><td><code>make install</code></td><td>Both of the above, copied to <code>/usr/local/bin</code></td></tr>
+      <tr><td><code>make clean</code></td><td>Removes <code>bin/</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Homebrew</h2>
+  <div class="callout note"><p><b>Not yet.</b> A Homebrew formula is on the way. Until then, the install script is one line.</p></div>
+
+  <h2>Verify</h2>
+<pre data-title="terminal"><code class="language-bash">rune --version      # rune v1.0.0-RC
+rune                # prints the banner and command list</code></pre>
+
+  <h2>Uninstall</h2>
+<pre data-title="terminal"><code class="language-bash">sudo rm /usr/local/bin/rune /usr/local/bin/rune-server
+rm -rf ~/.rune      # ⚠ deletes the vault database and your saved CLI token</code></pre>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPTS
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="architecture" data-group="Concepts" data-title="Architecture" data-desc="How the CLI, Web UI, SDK and server talk to each other.">
+  <h1>Architecture</h1>
+  <p class="lede">Everything goes through <code>rune-server</code>. The CLI, the Web UI and the Java SDK are all clients of the same HTTP API.</p>
+
+  <div class="arch" aria-label="Architecture diagram">
+    <div class="arch-row">
+      <div class="arch-box">rune CLI<small>~/.rune/config.json</small></div>
+      <div class="arch-box">Web UI<small>browser · /ui/</small></div>
+      <div class="arch-box">Java SDK<small>Spring Boot starter</small></div>
+      <div class="arch-box dim">your scripts<small>curl · any HTTP client</small></div>
+    </div>
+    <div class="arch-arrow">HTTP · <code>Authorization: Bearer &lt;token&gt;</code></div>
+    <div class="arch-box wide core">rune-server :2710
+      <small>auth middleware → RBAC check → secret / token / namespace services → seal manager</small>
+    </div>
+    <div class="arch-arrow">AES-256-GCM, key held in memory only while unsealed</div>
+    <div class="arch-box wide">~/.rune/rune.db<small>bbolt embedded key/value store</small></div>
+  </div>
+
+  <h2>What lives where</h2>
+  <table class="ref">
+    <thead><tr><th>Path</th><th>Contents</th></tr></thead>
+    <tbody>
+      <tr><td><code>~/.rune/rune.db</code></td><td>The vault: encrypted secrets and versions, token records (hashed), namespaces, salt, a verification record.</td></tr>
+      <tr><td><code>~/.rune/config.json</code></td><td>The token the CLI uses, saved by <code>rune login</code>.</td></tr>
+      <tr><td>memory of <code>rune-server</code></td><td>The derived encryption key — only between <code>unseal</code> and <code>seal</code> (or a restart).</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Request lifecycle</h2>
+  <ol>
+    <li>The client sends a request with <code>Authorization: Bearer &lt;token&gt;</code>. Only <code>/status</code>, <code>/unseal</code>, <code>/health</code> and <code>/ui/</code> are public.</li>
+    <li>The server SHA-256 hashes the token and looks up its record. Unknown or revoked tokens get <code>401</code>.</li>
+    <li>The handler checks the token's permission for the namespace (<code>read</code>, <code>write</code>, <code>delete</code>, <code>rotate</code>). Failures get <code>403 [AUTHORIZATION DENIED]</code>.</li>
+    <li>The service checks the vault is unsealed, then encrypts or decrypts with the in-memory key.</li>
+  </ol>
+
+  <div class="callout note"><p>The CLI currently talks to <code>http://localhost:2710</code>, so run it on the same machine as <code>rune-server</code>. Remote apps can use the HTTP API or the Java SDK with any base URL.</p></div>
+</article>
+
+<article class="doc" data-slug="seal-unseal" data-group="Concepts" data-title="Seal &amp; unseal" data-desc="The passphrase, the in-memory key and what works while sealed.">
+  <h1>Seal &amp; unseal</h1>
+  <p class="lede">A sealed vault is a locked box: secrets are on disk, encrypted, and the key to read them doesn't exist anywhere. Unsealing derives the key from your passphrase and keeps it in memory until you seal again.</p>
+
+  <h2>Lifecycle</h2>
+  <div class="states">
+    <div class="state">sealed<small>after start / restart / <code>rune seal</code></small></div>
+    <div class="state-arrow">rune unseal →<br><small>passphrase</small></div>
+    <div class="state open">unsealed<small>key held in memory</small></div>
+    <div class="state-arrow">← rune seal<br><small>key cleared</small></div>
+  </div>
+
+  <h2>How unsealing works</h2>
+  <ol>
+    <li>On first start, <code>rune-server</code> generates a random salt and asks you to set a passphrase.</li>
+    <li>A key is derived from the passphrase and salt, and used to encrypt a known verification value. The passphrase itself is never stored.</li>
+    <li>On <code>unseal</code>, the server derives the key again and tries to decrypt the verification value. If it matches, the key is kept in memory and the vault is unsealed. If not: <code>401 Invalid Passphrase</code>.</li>
+    <li><code>seal</code> wipes the key from memory. Restarting the server has the same effect.</li>
+  </ol>
+
+  <h2>What works while sealed</h2>
+  <table class="ref">
+    <thead><tr><th>Operation</th><th>Sealed</th></tr></thead>
+    <tbody>
+      <tr><td><code>rune status</code>, <code>rune unseal</code>, <code>GET /health</code></td><td class="yes">yes</td></tr>
+      <tr><td>Reading secrets with a <a href="#/service-identities">system token</a></td><td class="yes">yes</td></tr>
+      <tr><td>Everything else — put, get, rotate, tokens, namespaces</td><td class="no">no — <code>[OPERATION DENIED]: Vault is Sealed</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout tip"><p>Seal the vault whenever you step away from a shared machine. It costs one command to get back: <code>rune unseal</code>.</p></div>
+</article>
+
+<article class="doc" data-slug="namespaces" data-group="Concepts" data-title="Namespaces" data-desc="Isolate secrets by environment, app or team.">
+  <h1>Namespaces</h1>
+  <p class="lede">A namespace is a folder for secrets. The same key can exist in several namespaces without conflict — <code>db-password</code> in <code>staging</code> and in <code>production</code> are two different secrets.</p>
+
+  <h2>The default namespace</h2>
+  <p><code>default</code> always exists and can't be deleted. Any command without <code>-n</code> uses it.</p>
+
+  <h2>Working with namespaces</h2>
+<pre data-title="terminal"><code class="language-bash">rune namespace create production
+rune namespace list
+rune put stripe-key 'sk_live_…' -n production
+rune namespace delete staging      # asks for confirmation</code></pre>
+
+  <h2>Rules</h2>
+  <ul>
+    <li>Creating, listing and deleting namespaces requires the <b>root token</b> and an unsealed vault.</li>
+    <li>A namespace must exist before you can put secrets in it or grant a token access to it.</li>
+    <li>Deleting a namespace deletes every secret in it.</li>
+  </ul>
+
+  <div class="callout tip"><p>A namespace per environment (<code>dev</code>, <code>staging</code>, <code>production</code>) or per service (<code>payments</code>, <code>search</code>) both work. Pick whichever matches how you'd want to hand out tokens.</p></div>
+</article>
+
+<article class="doc" data-slug="secrets-versioning" data-group="Concepts" data-title="Secrets &amp; versioning" data-desc="How secrets are stored, versioned and deleted.">
+  <h1>Secrets &amp; versioning</h1>
+  <p class="lede">A secret is a key, a value and a namespace. Every value is encrypted individually with AES-256-GCM and a fresh random nonce, and every rotation is kept as a new, separately encrypted version.</p>
+
+  <h2>Versions</h2>
+  <ul>
+    <li><code>rune put</code> writes the secret as <b>version 1</b>.</li>
+    <li><code>rune rotate</code> creates the next version (2, 3, …). Earlier versions stay readable with <code>rune get --version N</code>.</li>
+    <li><code>rune history</code> lists every version with its created and rotated timestamps.</li>
+  </ul>
+  <div class="callout warn"><p>Running <code>rune put</code> on a key that already exists overwrites it and starts again at version 1. To keep history, use <a href="#/rotation"><code>rune rotate</code></a>.</p></div>
+
+  <h2>Deleting</h2>
+  <p><code>rune delete</code> removes the secret <b>and every version</b> of it. Nothing lingers, including copies held for <a href="#/service-identities">system tokens</a>.</p>
+
+  <h2>Keys</h2>
+  <p>Keys are trimmed, a leading <code>/</code> is dropped, and a leading <code>default/</code> is dropped. Use the <code>-n</code> flag for namespaces rather than putting them in the key.</p>
+
+  <div class="callout note"><p><b>Rollback</b> — creating a new version from an old one — is on the roadmap for the next release. History stays append-only.</p></div>
+</article>
+
+<article class="doc" data-slug="rotation" data-group="Concepts" data-title="Rotation" data-desc="Manual and automated rotation.">
+  <h1>Rotation</h1>
+  <p class="lede">Rotating a secret replaces its value with a freshly generated one and bumps the version. The old value stays in history, encrypted.</p>
+
+  <h2>Manual rotation</h2>
+<pre data-title="terminal"><code class="language-bash">rune rotate db-password -n production</code></pre>
+<pre data-title="output" class="out"><code class="language-text">
+  SECRET ROTATED
+  ─────────────────────────────────────────────
+  Namespace:   production
+  Key:         db-password
+  New Value:   Vq3m9X0rK1…
+  ─────────────────────────────────────────────
+
+✔ Secret rotated successfully</code></pre>
+  <p>The new value is 32 cryptographically random bytes, base64url-encoded (43 characters). Rotating requires the <code>rotate</code> permission on the namespace.</p>
+  <div class="callout warn"><p>Rotation changes the value <em>in Rune</em>. If the secret is also a password inside another system (a database user, an API provider), update it there too — or read it from Rune at startup so your app always has the current one.</p></div>
+
+  <h2>Automated rotation</h2>
+  <p>Rune can rotate secrets for you on a schedule, so long-lived credentials don't stay long-lived. Every automated rotation is a normal rotation: a new version, the old one kept, and an entry in the <a href="#/audit-logging">audit log</a>.</p>
+  <div class="callout note" data-todo="automated-rotation-syntax"><p>The configuration reference for automated rotation is being added to these docs. Rotation <em>policies</em> — rules per namespace — are coming in the next release.</p></div>
+</article>
+
+<article class="doc" data-slug="tokens-rbac" data-group="Concepts" data-title="Tokens &amp; RBAC" data-desc="Root token, scoped tokens and per-namespace permissions.">
+  <h1>Tokens &amp; RBAC</h1>
+  <p class="lede">Every request to Rune carries a token. A token says <em>who</em> is asking and <em>what they may do</em>, namespace by namespace.</p>
+
+  <h2>Kinds of token</h2>
+  <table class="ref">
+    <thead><tr><th>Token</th><th>ID</th><th>Access</th></tr></thead>
+    <tbody>
+      <tr><td><b>root</b></td><td><code>root</code></td><td>Everything, in every namespace. Created once, on first server start. Required to manage namespaces and tokens.</td></tr>
+      <tr><td><b>regular</b></td><td><code>tkn_…</code></td><td>Only the permissions you grant, in the namespaces you list.</td></tr>
+      <tr><td><b>system</b></td><td><code>stk_…</code></td><td>Read-only, one namespace, keeps working while sealed. See <a href="#/service-identities">Service identities</a>.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Permissions</h2>
+  <div class="perm-grid">
+    <div><code>read</code><span>get, list, history, versions</span></div>
+    <div><code>write</code><span>put</span></div>
+    <div><code>delete</code><span>delete a secret and its history</span></div>
+    <div><code>rotate</code><span>generate a new version</span></div>
+  </div>
+
+  <h2>Granting access</h2>
+  <p>Pass <code>-n namespace:perm,perm</code> once per namespace. A namespace with no permissions listed gets all four.</p>
+<pre data-title="terminal"><code class="language-bash"># CI can deploy to production, nothing else
+rune token create ci-deploy -n production:read,write
+
+# read production, read+write staging
+rune token create dev-laptop -n production:read -n staging:read,write
+
+# everything in sandbox
+rune token create playground -n sandbox</code></pre>
+
+  <h2>What denial looks like</h2>
+<pre data-title="output" class="out"><code class="language-text">✖ [AUTHORIZATION DENIED]: Token cannot write to this namespace</code></pre>
+  <p>Over HTTP that's a <code>403</code>. Unknown tokens get <code>401 invalid token</code>; revoked ones <code>401 token has been revoked</code>.</p>
+
+  <h2>How tokens are stored</h2>
+  <p>A token is 32 random bytes, hex-encoded (64 characters). Rune stores only its SHA-256 hash, so the plain token is shown exactly once — when it's created.</p>
+
+  <h2>Revoking</h2>
+<pre data-title="terminal"><code class="language-bash">rune token list                 # find the ID
+rune token revoke tkn_1730451234567890</code></pre>
+  <p>Revocation is immediate. Revoking a system token also deletes the encrypted copies it used to read while sealed.</p>
+</article>
+
+<article class="doc" data-slug="service-identities" data-group="Concepts" data-title="Service identities" data-desc="System tokens for applications and services.">
+  <h1>Service identities</h1>
+  <p class="lede">Applications shouldn't borrow a human's token. A <b>system token</b> is an identity for one service: read-only, bound to one namespace, and able to read secrets even while the vault is sealed — so a restart of <code>rune-server</code> doesn't take your apps down with it.</p>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>While unsealed, root creates a system token for a namespace.</li>
+    <li>Rune derives a separate key from the plain token and re-encrypts that namespace's secrets with it. That key is itself stored encrypted under the vault key.</li>
+    <li>When the vault is sealed, a request with the system token re-derives its key from the token and reads its own copy. Without the token, the copy can't be decrypted.</li>
+    <li>Puts, rotations and deletes in the namespace keep the copies in sync. Revoking the token deletes them.</li>
+  </ol>
+
+  <h2>Create one</h2>
+  <p>System tokens are created through the HTTP API with the root token:</p>
+<pre data-title="terminal"><code class="language-bash">curl -X POST http://localhost:2710/token/create-system \
+  -H "Authorization: Bearer $RUNE_ROOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"payments-api","namespace":"production"}'</code></pre>
+<pre data-title="response · 200" class="out"><code class="language-json">{
+  "token": "9a41…e07c",
+  "record": {
+    "id": "stk_1730451234567890",
+    "name": "payments-api",
+    "namespace": "production",
+    "namespaces": [{ "namespace": "production", "permissions": ["read"] }],
+    "read_only": true,
+    "system": true
+  }
+}</code></pre>
+  <div class="callout tip"><p>Pair a system token with the <a href="#/sdk-spring-boot">Java SDK</a>: your Spring app keeps booting even if someone sealed the vault for the night.</p></div>
+</article>
+
+<article class="doc" data-slug="token-expiration" data-group="Concepts" data-title="Token expiration" data-desc="Tokens that end on their own.">
+  <h1>Token expiration</h1>
+  <p class="lede">Tokens can be given a lifetime. When it runs out, the token stops working — no clean-up ticket, no forgotten CI variable that still opens production two years later.</p>
+  <h2>Why it matters</h2>
+  <ul>
+    <li>Short-lived tokens for CI jobs and one-off scripts limit the blast radius of a leak.</li>
+    <li>Long-lived service tokens can still be revoked at any time with <code>rune token revoke</code>.</li>
+  </ul>
+  <div class="callout note" data-todo="token-expiration-syntax"><p>The flag reference for setting a token's lifetime is being added to these docs.</p></div>
+</article>
+
+<article class="doc" data-slug="audit-logging" data-group="Concepts" data-title="Audit logging" data-desc="Who did what, when, with which token.">
+  <h1>Audit logging</h1>
+  <p class="lede">Every meaningful action in the vault leaves a record: which token, which operation, which secret, when, and whether it was allowed.</p>
+  <h2>What gets recorded</h2>
+  <table class="ref">
+    <thead><tr><th>Field</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>time</td><td><code>2026-11-01T10:30:42Z</code></td></tr>
+      <tr><td>actor</td><td>token name / ID — <code>ci-deploy</code></td></tr>
+      <tr><td>action</td><td><code>secret.get</code>, <code>secret.rotate</code>, <code>token.create</code>, <code>vault.unseal</code>…</td></tr>
+      <tr><td>target</td><td><code>production/db-password</code></td></tr>
+      <tr><td>result</td><td>allowed or denied</td></tr>
+    </tbody>
+  </table>
+  <p>Denied requests are logged too — a token repeatedly bouncing off <code>[AUTHORIZATION DENIED]</code> is exactly what you want to notice.</p>
+  <div class="callout note" data-todo="audit-syntax"><p>CLI and API reference for querying the audit log is being added to these docs.</p></div>
+</article>
+
+<article class="doc" data-slug="security-model" data-group="Concepts" data-title="Security model" data-desc="What Rune protects against, and what it doesn't.">
+  <h1>Security model</h1>
+  <p class="lede">Rune is designed so that a copy of <code>rune.db</code> on its own is useless, and a leaked token is only as powerful as you made it.</p>
+
+  <h2>Cryptography</h2>
+  <table class="ref">
+    <tbody>
+      <tr><td>Secret encryption</td><td>AES-256-GCM, a fresh random nonce per write</td></tr>
+      <tr><td>Vault key</td><td>Derived from your passphrase and a random per-vault salt; held in memory only while unsealed</td></tr>
+      <tr><td>Passphrase check</td><td>Decrypting a known verification record — the passphrase is never stored</td></tr>
+      <tr><td>Tokens</td><td>32 random bytes; stored as SHA-256 hashes</td></tr>
+      <tr><td>System token key</td><td>SHA-256 of a domain-separated prefix plus the plain token</td></tr>
+      <tr><td>Rotated values</td><td>32 random bytes from the OS CSPRNG, base64url</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Protected against</h2>
+  <ul>
+    <li>Someone copying <code>~/.rune/rune.db</code> — they get ciphertext and hashes.</li>
+    <li>A leaked app token reaching beyond its namespaces and permissions.</li>
+    <li>Old values disappearing on rotation — they're versioned, not overwritten.</li>
+  </ul>
+
+  <h2>Your job</h2>
+  <ul>
+    <li><b>The passphrase</b> — there's no recovery. Store it somewhere safe.</li>
+    <li><b>The root token</b> — use it to administer, not to run apps.</li>
+    <li><b><code>~/.rune/config.json</code></b> holds the CLI's token in plain text. Keep it readable only by you: <code>chmod 600 ~/.rune/config.json</code>.</li>
+    <li><b>Transport</b> — <code>rune-server</code> speaks plain HTTP on <code>:2710</code>. Keep it on localhost or a private network, or put TLS in front of it.</li>
+    <li><b>Shell history</b> — <code>rune put key value</code> lands in your history. Quote values, and consider a leading space with <code>HISTCONTROL=ignorespace</code>.</li>
+  </ul>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CLI REFERENCE
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="cli-overview" data-group="CLI reference" data-title="Overview" data-desc="Global behaviour, configuration and the command map.">
+  <h1>CLI overview</h1>
+  <p class="lede"><code>rune</code> is a thin client for <code>rune-server</code>. It reads its token from <code>~/.rune/config.json</code> and talks to <code>http://localhost:2710</code>.</p>
+
+<pre data-title="terminal"><code class="language-bash">rune                 # banner + command list
+rune --version       # or -v
+rune &lt;command&gt; --help</code></pre>
+
+  <h2>Commands</h2>
+  <table class="ref cmds">
+    <thead><tr><th>Command</th><th>Does</th><th>Needs</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#/cli-login"><code>login</code></a></td><td>Save a token for the CLI</td><td>—</td></tr>
+      <tr><td><a href="#/cli-vault-state"><code>status</code></a></td><td>Sealed or unsealed?</td><td>—</td></tr>
+      <tr><td><a href="#/cli-vault-state"><code>unseal</code></a></td><td>Unseal with your passphrase</td><td>passphrase</td></tr>
+      <tr><td><a href="#/cli-vault-state"><code>seal</code></a></td><td>Seal, clearing the key from memory</td><td>token</td></tr>
+      <tr><td><a href="#/cli-put"><code>put</code></a></td><td>Store a secret</td><td><code>write</code></td></tr>
+      <tr><td><a href="#/cli-get"><code>get</code></a></td><td>Read a secret or one of its versions</td><td><code>read</code></td></tr>
+      <tr><td><a href="#/cli-list"><code>list</code></a></td><td>List keys in a namespace</td><td><code>read</code></td></tr>
+      <tr><td><a href="#/cli-delete"><code>delete</code></a></td><td>Delete a secret and its history</td><td><code>delete</code></td></tr>
+      <tr><td><a href="#/cli-rotate"><code>rotate</code></a></td><td>Generate a new value</td><td><code>rotate</code></td></tr>
+      <tr><td><a href="#/cli-history"><code>history</code></a></td><td>Show versions</td><td><code>read</code></td></tr>
+      <tr><td><a href="#/cli-namespace"><code>namespace</code></a></td><td>create · list · delete</td><td>root</td></tr>
+      <tr><td><a href="#/cli-token"><code>token</code></a></td><td>create · list · revoke</td><td>root</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Namespaces</h2>
+  <p>Secret commands take <code>-n</code> / <code>--namespace</code>. Leave it out and you get <code>default</code>.</p>
+
+  <h2>Output conventions</h2>
+<pre class="out" data-title="output"><code class="language-text">✔ success
+✖ error — usually the server's message, e.g. [OPERATION DENIED]: Vault is Sealed
+➜ info
+! warning</code></pre>
+  <p>Colours are disabled when <code>NO_COLOR</code> is set or output isn't a terminal.</p>
+</article>
+
+<article class="doc" data-slug="cli-login" data-group="CLI reference" data-title="rune login" data-desc="Save the token the CLI uses.">
+  <h1><code>rune login</code></h1>
+  <p class="lede">Saves a token to <code>~/.rune/config.json</code>. Every other authenticated command uses it.</p>
+<pre data-title="usage"><code class="language-bash">rune login &lt;token&gt;</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ Token saved successfully</code></pre>
+  <div class="callout note"><p><code>login</code> doesn't contact the server — it just saves the token. A typo shows up on the next command as <code>invalid token</code>.</p></div>
+  <p>Switch identities by logging in again with another token. Without a saved token, commands fail with:</p>
+<pre class="out" data-title="output"><code class="language-text">✖ [AUTHENTICATION FAILED] Please login first using: rune login &lt;token&gt;</code></pre>
+</article>
+
+<article class="doc" data-slug="cli-vault-state" data-group="CLI reference" data-title="status · unseal · seal" data-desc="Check and change the vault's sealed state.">
+  <h1><code>status</code> · <code>unseal</code> · <code>seal</code></h1>
+  <p class="lede">Three commands for the vault's state. See <a href="#/seal-unseal">Seal &amp; unseal</a> for the why.</p>
+
+  <h2><code>rune status</code></h2>
+<pre data-title="terminal"><code class="language-bash">rune status</code></pre>
+<pre data-title="output" class="out"><code class="language-text">🔒 Vault is Sealed</code></pre>
+  <p>No token needed.</p>
+
+  <h2><code>rune unseal</code></h2>
+  <p>Prompts for the passphrase with input hidden. No token needed.</p>
+<pre data-title="output" class="out"><code class="language-text">Enter passphrase:
+✔ Vault Unsealed Successfully</code></pre>
+  <p>A wrong passphrase returns <code>✖ error: Invalid Passphrase</code>.</p>
+
+  <h2><code>rune seal</code></h2>
+  <p>Clears the key from the server's memory. Requires a valid token.</p>
+<pre data-title="output" class="out"><code class="language-text">✔ Vault Sealed Successfully</code></pre>
+</article>
+
+<article class="doc" data-slug="cli-put" data-group="CLI reference" data-title="rune put" data-desc="Store and encrypt a secret.">
+  <h1><code>rune put</code></h1>
+  <p class="lede">Encrypts a value and stores it under a key.</p>
+<pre data-title="usage"><code class="language-bash">rune put &lt;key&gt; &lt;value&gt; [-n namespace]</code></pre>
+  <h2>Flags</h2>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>-n, --namespace</code><span class="type">string</span><span class="def">default: default</span></div><p>Namespace to store the secret in. Must exist.</p></div>
+  </div>
+  <h2>Examples</h2>
+<pre data-title="terminal"><code class="language-bash">rune put db-password 'hunter2-but-longer'
+rune put stripe-key 'sk_live_51Hx…' -n production</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ Secret Stored Successfully</code></pre>
+  <div class="callout warn"><p>Values containing <code>$</code> trigger <code>! Detected '$' in value. Use quotes to avoid shell expansion.</code> — single-quote them.</p></div>
+  <div class="callout note"><p><code>put</code> on an existing key overwrites it at version 1. Use <a href="#/cli-rotate"><code>rotate</code></a> to add a version.</p></div>
+  <p>Requires <code>write</code> on the namespace.</p>
+</article>
+
+<article class="doc" data-slug="cli-get" data-group="CLI reference" data-title="rune get" data-desc="Read a secret, or a specific version.">
+  <h1><code>rune get</code></h1>
+  <p class="lede">Decrypts and prints a secret. The vault must be unsealed.</p>
+<pre data-title="usage"><code class="language-bash">rune get &lt;key&gt; [-n namespace] [--version N]</code></pre>
+  <h2>Flags</h2>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>-n, --namespace</code><span class="type">string</span><span class="def">default: default</span></div><p>Namespace containing the secret.</p></div>
+    <div class="param"><div class="p-head"><code>--version</code><span class="type">int</span><span class="def">default: latest</span></div><p>Fetch a specific version from <a href="#/cli-history">history</a>.</p></div>
+  </div>
+  <h2>Examples</h2>
+<pre data-title="terminal"><code class="language-bash">rune get db-password -n production
+rune get db-password -n production --version 2</code></pre>
+<pre data-title="output" class="out"><code class="language-text">[SECRET] hunter2-but-longer
+✔ Secret retrieved</code></pre>
+  <p>Requires <code>read</code> on the namespace.</p>
+</article>
+
+<article class="doc" data-slug="cli-list" data-group="CLI reference" data-title="rune list" data-desc="List keys in a namespace.">
+  <h1><code>rune list</code></h1>
+  <p class="lede">Lists keys — never values.</p>
+<pre data-title="usage"><code class="language-bash">rune list [-n namespace]</code></pre>
+<pre data-title="output" class="out"><code class="language-text">Stored Secrets:
+
+  [SECRET] db-password
+  [SECRET] redis-url</code></pre>
+  <p>An empty namespace prints <code>➜ No stored keys found</code>. Requires <code>read</code>.</p>
+</article>
+
+<article class="doc" data-slug="cli-delete" data-group="CLI reference" data-title="rune delete" data-desc="Delete a secret and all of its versions.">
+  <h1><code>rune delete</code></h1>
+  <p class="lede">Deletes a secret and every version of it, after asking.</p>
+<pre data-title="usage"><code class="language-bash">rune delete &lt;key&gt; [-n namespace]</code></pre>
+<pre data-title="output" class="out"><code class="language-text">Are you sure you want to delete secret 'redis-url' (namespace: production)? (y/N): y
+✔ Secret deleted</code></pre>
+  <p>Anything but <code>y</code> prints <code>➜ Operation Cancelled</code>. Requires <code>delete</code>.</p>
+  <div class="callout danger"><p>There's no undo. History goes with it.</p></div>
+</article>
+
+<article class="doc" data-slug="cli-rotate" data-group="CLI reference" data-title="rune rotate" data-desc="Generate a new value and version.">
+  <h1><code>rune rotate</code></h1>
+  <p class="lede">Replaces the value with 32 random bytes (base64url) and creates the next version.</p>
+<pre data-title="usage"><code class="language-bash">rune rotate &lt;key&gt; [-n namespace]</code></pre>
+<pre data-title="output" class="out"><code class="language-text">
+  SECRET ROTATED
+  ─────────────────────────────────────────────
+  Namespace:   production
+  Key:         db-password
+  New Value:   Vq3m9X0rK1…
+  ─────────────────────────────────────────────
+
+✔ Secret rotated successfully</code></pre>
+  <p>Requires <code>rotate</code>. The secret must already exist.</p>
+</article>
+
+<article class="doc" data-slug="cli-history" data-group="CLI reference" data-title="rune history" data-desc="Show a secret's versions.">
+  <h1><code>rune history</code></h1>
+  <p class="lede">Shows every version of a secret with when it was created and rotated.</p>
+<pre data-title="usage"><code class="language-bash">rune history &lt;key&gt; [-n namespace]</code></pre>
+<pre data-title="output" class="out"><code class="language-text">
+  SECRET HISTORY
+  ─────────────────────────────────────────────────────────
+  VERSION    CREATED                   ROTATED
+  ─────────────────────────────────────────────────────────
+  1          2026-10-02T09:12:04+05:30 -
+  2          2026-10-02T09:12:04+05:30 2026-10-09T14:03:51+05:30
+  3          2026-10-02T09:12:04+05:30 2026-11-01T10:30:42+05:30
+  ─────────────────────────────────────────────────────────
+</code></pre>
+  <p>Fetch any of them with <code>rune get &lt;key&gt; --version N</code>. Requires <code>read</code>.</p>
+</article>
+
+<article class="doc" data-slug="cli-namespace" data-group="CLI reference" data-title="rune namespace" data-desc="Create, list and delete namespaces.">
+  <h1><code>rune namespace</code></h1>
+  <p class="lede">Manage namespaces. All subcommands need the root token and an unsealed vault.</p>
+
+  <h2><code>create</code></h2>
+<pre data-title="terminal"><code class="language-bash">rune namespace create production</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ [NAMESPACE CREATED] Created namespace</code></pre>
+
+  <h2><code>list</code></h2>
+<pre data-title="output" class="out"><code class="language-text">Namespaces:
+
+[NAMESPACES] default
+[NAMESPACES] production</code></pre>
+
+  <h2><code>delete</code></h2>
+<pre data-title="output" class="out"><code class="language-text">Are you sure you want to delete namespace 'staging'? (y/N): y
+✔ Namespace deleted</code></pre>
+  <div class="callout danger"><p>Deletes every secret in the namespace. <code>default</code> can't be deleted.</p></div>
+</article>
+
+<article class="doc" data-slug="cli-token" data-group="CLI reference" data-title="rune token" data-desc="Create, list and revoke tokens.">
+  <h1><code>rune token</code></h1>
+  <p class="lede">Manage access tokens. All subcommands need the root token.</p>
+
+  <h2><code>create</code></h2>
+<pre data-title="usage"><code class="language-bash">rune token create [name] -n &lt;namespace[:perms]&gt; [-n …]</code></pre>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>name</code><span class="type">arg</span><span class="def">default: default</span></div><p>Display name. You can also pass <code>--name</code>.</p></div>
+    <div class="param"><div class="p-head"><code>-n, --namespace</code><span class="type">string, repeatable</span><span class="req">required</span></div><p><code>namespace:perm,perm</code> with perms from <code>read</code>, <code>write</code>, <code>delete</code>, <code>rotate</code>. Without <code>:perms</code>, all four.</p></div>
+  </div>
+<pre data-title="terminal"><code class="language-bash">rune token create ci-deploy -n production:read,write -n staging:read</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ Token created successfully
+
+  ID:          tkn_1730451234567890
+  Name:        ci-deploy
+  Created At:  2026-11-01T10:30:42+05:30
+
+  production           read, write
+  staging              read
+
+  Token: 5b0e…(64 hex characters)…c91f</code></pre>
+  <div class="callout warn"><p>The token is printed once. Rune keeps only its hash.</p></div>
+
+  <h2><code>list</code></h2>
+<pre data-title="output" class="out"><code class="language-text">Tokens:
+
+  ID                           NAME                 CREATED AT                TYPE       STATUS
+  -------------------------------------------------------------------------------------------------
+  root                         root                 2026-10-01T09:00:00+05:30 regular    active
+  tkn_1730451234567890         ci-deploy            2026-11-01T10:30:42+05:30 regular    active
+  stk_1730451299999999         payments-api         2026-11-01T10:31:47+05:30 system     active</code></pre>
+
+  <h2><code>revoke</code></h2>
+<pre data-title="terminal"><code class="language-bash">rune token revoke tkn_1730451234567890</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ Token revoked</code></pre>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SERVER & WEB UI
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="rune-server" data-group="Server &amp; Web UI" data-title="rune-server" data-desc="The vault process: first run, data, ports and routes.">
+  <h1><code>rune-server</code></h1>
+  <p class="lede">The vault. One process that stores encrypted secrets, enforces tokens, serves the HTTP API and hosts the Web UI.</p>
+
+  <h2>Start it</h2>
+<pre data-title="terminal"><code class="language-bash">rune-server</code></pre>
+<pre data-title="output" class="out"><code class="language-text">  rune  local-first secrets vault
+
+  ➜  api    http://localhost:2710
+  ➜  ui     http://localhost:2710/ui/
+  ➜  db     /Users/you/.rune/rune.db
+
+  ⬡  vault sealed  —  run rune unseal or open the web UI</code></pre>
+  <p>On the very first start it also asks you to set a passphrase and prints the root token once — see the <a href="#/quickstart">Quickstart</a>.</p>
+
+  <h2>Defaults</h2>
+  <table class="ref">
+    <tbody>
+      <tr><td>Port</td><td><code>2710</code>, all interfaces</td></tr>
+      <tr><td>API</td><td><code>http://localhost:2710</code></td></tr>
+      <tr><td>Web UI</td><td><code>http://localhost:2710/ui/</code></td></tr>
+      <tr><td>Database</td><td><code>~/.rune/rune.db</code> (bbolt)</td></tr>
+      <tr><td>Default namespace</td><td><code>default</code>, created on every start if missing</td></tr>
+      <tr><td>State on start</td><td>Always <b>sealed</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn"><p>The server listens on all interfaces over plain HTTP. On a shared network, firewall port 2710 or put a TLS reverse proxy in front of it.</p></div>
+
+  <h2>Running it as a service</h2>
+  <p>Because the vault starts sealed, a restart means someone runs <code>rune unseal</code> again. Apps using <a href="#/service-identities">system tokens</a> keep reading in the meantime. A minimal systemd unit:</p>
+<pre data-title="/etc/systemd/system/rune.service"><code class="language-properties">[Unit]
+Description=Rune secrets vault
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/rune-server
+User=rune
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+  <div class="callout note"><p>Run the first start interactively — it needs a terminal to set the passphrase. After that the service can start unattended.</p></div>
+
+  <h2>Routes</h2>
+  <table class="ref">
+    <thead><tr><th>Route</th><th>Auth</th></tr></thead>
+    <tbody>
+      <tr><td><code>/health</code>, <code>/status</code>, <code>/unseal</code></td><td>public</td></tr>
+      <tr><td><code>/ui/</code></td><td>public (static files — the UI then calls the API with a token)</td></tr>
+      <tr><td>everything else</td><td>bearer token — see the <a href="#/api-overview">API reference</a></td></tr>
+    </tbody>
+  </table>
+</article>
+
+<article class="doc" data-slug="web-ui" data-group="Server &amp; Web UI" data-title="Web UI" data-desc="The vault in your browser.">
+  <h1>Web UI</h1>
+  <p class="lede">A browser interface to the same vault, built into <code>rune-server</code>. No separate install, no desktop app — open <code>http://localhost:2710/ui/</code>.</p>
+
+  <div class="ui-shot" aria-hidden="true">
+    <div class="us-bar"><i></i><i></i><i></i><span>localhost:2710/ui/</span></div>
+    <div class="us-body">
+      <div class="us-side"><b>rune</b><span class="on">Dashboard</span><span>Secrets</span><span>Namespaces</span><span>Tokens</span></div>
+      <div class="us-main">
+        <div class="us-stats"><div><small>secrets</small><b>24</b></div><div><small>namespaces</small><b>4</b></div><div><small>rotated</small><b>9</b></div><div><small>active tokens</small><b>6</b></div></div>
+        <div class="us-rows"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>What you can do</h2>
+  <ul>
+    <li><b>Unseal</b> the vault from the browser.</li>
+    <li><b>Dashboard</b> — totals for secrets, namespaces, rotated secrets and tokens, secrets per namespace, tokens created per month.</li>
+    <li><b>Secrets</b> — browse by namespace, reveal, create, rotate, delete, inspect versions.</li>
+    <li><b>Namespaces</b> and <b>tokens</b> — create, scope with permissions, revoke.</li>
+  </ul>
+
+  <h2>Permissions</h2>
+  <p>The UI goes through the same HTTP API and the same token rules as everything else: a scoped token can only see and change what it's allowed to. Dashboard stats, namespaces and token management need root.</p>
+
+  <h2>Under the hood</h2>
+  <p>React + Vite + Tailwind, compiled and embedded into the <code>rune-server</code> binary with Go's <code>embed</code>. Building from source? <code>make server-build</code> runs <code>npm install &amp;&amp; npm run build</code> in <code>ui/</code> first.</p>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HTTP API
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="api-overview" data-group="HTTP API" data-title="Overview" data-desc="Base URL, authentication, errors.">
+  <h1>HTTP API</h1>
+  <p class="lede">The CLI, Web UI and SDK are all built on this API. Anything that speaks HTTP can use Rune.</p>
+
+  <h2>Base URL</h2>
+<pre data-title="base url"><code class="language-text">http://localhost:2710</code></pre>
+
+  <h2>Authentication</h2>
+  <p>Send a token as a bearer header on every request except <code>/health</code>, <code>/status</code> and <code>/unseal</code>.</p>
+<pre data-title="terminal"><code class="language-bash">curl -H "Authorization: Bearer $RUNE_TOKEN" \
+  "http://localhost:2710/secret/get?namespace=production&amp;key=db-password"</code></pre>
+
+  <h2>Errors</h2>
+  <p>Errors come back as a plain-text body with an HTTP status.</p>
+  <table class="ref">
+    <thead><tr><th>Status</th><th>Body (examples)</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>400</code></td><td><code>Invalid Request</code></td><td>Malformed JSON or missing parameters</td></tr>
+      <tr><td><code>401</code></td><td><code>missing token</code> · <code>invalid token</code> · <code>token has been revoked</code></td><td>Who are you?</td></tr>
+      <tr><td><code>403</code></td><td><code>[AUTHORIZATION DENIED]: Token cannot read from this namespace</code></td><td>Token lacks the permission, or root is required</td></tr>
+      <tr><td><code>403</code></td><td><code>[OPERATION DENIED]: Vault is Sealed</code></td><td>Unseal first</td></tr>
+      <tr><td><code>404</code></td><td>—</td><td>Secret or version not found</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Endpoints</h2>
+  <div class="cards">
+    <a class="card" href="#/api-vault"><span class="card-ico" data-i="lock"></span><b>Vault</b><span>health, status, unseal, seal</span></a>
+    <a class="card" href="#/api-secrets"><span class="card-ico" data-i="key"></span><b>Secrets</b><span>put, get, list, delete, rotate, versions</span></a>
+    <a class="card" href="#/api-tokens"><span class="card-ico" data-i="shield"></span><b>Tokens</b><span>me, create, system, list, revoke</span></a>
+    <a class="card" href="#/api-namespaces"><span class="card-ico" data-i="folder"></span><b>Namespaces &amp; stats</b><span>create, list, delete, dashboard stats</span></a>
+  </div>
+</article>
+
+<article class="doc" data-slug="api-vault" data-group="HTTP API" data-title="Vault" data-desc="Health, status, unseal and seal.">
+  <h1>Vault endpoints</h1>
+
+  <h2 id="get-health">Health</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/health</code><span class="auth">public</span></div>
+  <p>Returns <code>ok</code>. Use it for liveness checks.</p>
+
+  <h2 id="get-status">Status</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/status</code><span class="auth">public</span></div>
+  <p>Returns <code>sealed</code> or <code>unsealed</code> as plain text.</p>
+
+  <h2 id="post-unseal">Unseal</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/unseal</code><span class="auth">public</span></div>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>passphrase</code><span class="type">string</span><span class="req">required</span></div><p>The vault passphrase.</p></div>
+  </div>
+<pre data-title="request"><code class="language-bash">curl -X POST http://localhost:2710/unseal \
+  -H "Content-Type: application/json" \
+  -d '{"passphrase":"…"}'</code></pre>
+  <p><code>200 unsealed</code> · <code>401 Invalid Passphrase</code> · <code>500 Vault Not Initialized</code></p>
+
+  <h2 id="post-seal">Seal</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/seal</code><span class="auth">token</span></div>
+  <p>Clears the key from memory. Returns <code>sealed</code>.</p>
+</article>
+
+<article class="doc" data-slug="api-secrets" data-group="HTTP API" data-title="Secrets" data-desc="Store, read, list, delete, rotate and version secrets.">
+  <h1>Secrets endpoints</h1>
+  <p class="lede"><code>namespace</code> defaults to <code>default</code> everywhere it's optional.</p>
+
+  <h2 id="post-secret-put">Put a secret</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/secret/put</code><span class="auth">write</span></div>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>key</code><span class="type">string</span><span class="req">required</span></div></div>
+    <div class="param"><div class="p-head"><code>value</code><span class="type">string</span><span class="req">required</span></div></div>
+    <div class="param"><div class="p-head"><code>namespace</code><span class="type">string</span><span class="def">default</span></div></div>
+  </div>
+  <div class="code-group">
+<pre data-tab="curl"><code class="language-bash">curl -X POST http://localhost:2710/secret/put \
+  -H "Authorization: Bearer $RUNE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"key":"db-password","value":"hunter2","namespace":"production"}'</code></pre>
+<pre data-tab="Java"><code class="language-java">HttpRequest req = HttpRequest.newBuilder(URI.create("http://localhost:2710/secret/put"))
+    .header("Authorization", "Bearer " + token)
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(
+        "{\"key\":\"db-password\",\"value\":\"hunter2\",\"namespace\":\"production\"}"))
+    .build();
+HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());</code></pre>
+<pre data-tab="Go"><code class="language-go">body := strings.NewReader(`{"key":"db-password","value":"hunter2","namespace":"production"}`)
+req, _ := http.NewRequest("POST", "http://localhost:2710/secret/put", body)
+req.Header.Set("Authorization", "Bearer "+token)
+req.Header.Set("Content-Type", "application/json")
+resp, err := http.DefaultClient.Do(req)</code></pre>
+  </div>
+  <p>Returns <code>201 Created</code>.</p>
+
+  <h2 id="get-secret-get">Get a secret</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/secret/get?namespace=&amp;key=</code><span class="auth">read</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">{ "value": "hunter2" }</code></pre>
+  <p>Works while sealed for <a href="#/service-identities">system tokens</a>.</p>
+
+  <h2 id="get-secret-list">List keys</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/secret/list?namespace=</code><span class="auth">read</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">["db-password", "redis-url"]</code></pre>
+
+  <h2 id="get-secret-all">Get all secrets in a namespace</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/secret/all?namespace=</code><span class="auth">read</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">{ "db-password": "hunter2", "redis-url": "redis://cache.internal:6379/0" }</code></pre>
+
+  <h2 id="post-secret-rotate">Rotate</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/secret/rotate?namespace=&amp;key=</code><span class="auth">rotate</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">{ "value": "Vq3m9X0rK1…" }</code></pre>
+
+  <h2 id="get-secret-history">History</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/secret/history?namespace=&amp;key=</code><span class="auth">read</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">[
+  { "version": 1, "created_at": "2026-10-02T09:12:04+05:30", "updated_at": "2026-10-02T09:12:04+05:30", "rotated_at": "" },
+  { "version": 2, "created_at": "2026-10-02T09:12:04+05:30", "updated_at": "2026-10-09T14:03:51+05:30", "rotated_at": "2026-10-09T14:03:51+05:30" }
+]</code></pre>
+
+  <h2 id="get-secret-version">A specific version</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/secret/version?namespace=&amp;key=&amp;version=</code><span class="auth">read</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">{ "value": "hunter2" }</code></pre>
+
+  <h2 id="post-secret-delete">Delete</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/secret/delete</code><span class="auth">delete</span></div>
+<pre data-title="body"><code class="language-json">{ "key": "redis-url", "namespace": "production" }</code></pre>
+  <p>Removes the secret and all versions. Returns <code>200</code>.</p>
+</article>
+
+<article class="doc" data-slug="api-tokens" data-group="HTTP API" data-title="Tokens" data-desc="Inspect, create, list and revoke tokens.">
+  <h1>Tokens endpoints</h1>
+
+  <h2 id="get-token-me">Who am I?</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/token/me</code><span class="auth">token</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">{
+  "id": "tkn_1730451234567890",
+  "name": "ci-deploy",
+  "created_at": "2026-11-01T10:30:42+05:30",
+  "revoked": false,
+  "namespaces": [{ "namespace": "production", "permissions": ["read", "write"] }]
+}</code></pre>
+
+  <h2 id="post-token-create">Create a token</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/token/create</code><span class="auth">root</span></div>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>name</code><span class="type">string</span></div></div>
+    <div class="param"><div class="p-head"><code>namespaces</code><span class="type">array</span><span class="req">required</span></div><p><code>[{ "namespace": "production", "permissions": ["read","write"] }]</code> — permissions from <code>read</code>, <code>write</code>, <code>delete</code>, <code>rotate</code>.</p></div>
+  </div>
+<pre data-title="response · 200" class="out"><code class="language-json">{ "token": "5b0e…c91f", "record": { "id": "tkn_…", "name": "ci-deploy", "namespaces": [ … ] } }</code></pre>
+
+  <h2 id="post-token-create-system">Create a system token</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/token/create-system</code><span class="auth">root</span></div>
+<pre data-title="body"><code class="language-json">{ "name": "payments-api", "namespace": "production" }</code></pre>
+  <p>Read-only, single namespace, reads while sealed. See <a href="#/service-identities">Service identities</a>.</p>
+
+  <h2 id="get-token-list">List tokens</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/token/list</code><span class="auth">root</span></div>
+
+  <h2 id="post-token-revoke">Revoke</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/token/revoke</code><span class="auth">root</span></div>
+<pre data-title="body"><code class="language-json">{ "id": "tkn_1730451234567890" }</code></pre>
+</article>
+
+<article class="doc" data-slug="api-namespaces" data-group="HTTP API" data-title="Namespaces &amp; stats" data-desc="Manage namespaces and read dashboard stats.">
+  <h1>Namespaces &amp; stats</h1>
+  <p class="lede">All of these need the root token and an unsealed vault.</p>
+
+  <h2 id="post-namespace-create">Create</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/namespace/create</code><span class="auth">root</span></div>
+<pre data-title="body"><code class="language-json">{ "name": "production" }</code></pre>
+
+  <h2 id="get-namespace-list">List</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/namespace/list</code><span class="auth">root</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">["default", "production", "staging"]</code></pre>
+
+  <h2 id="post-namespace-delete">Delete</h2>
+  <div class="endpoint"><span class="method post">POST</span><code>/namespace/delete</code><span class="auth">root</span></div>
+<pre data-title="body"><code class="language-json">{ "name": "staging" }</code></pre>
+  <p>Deletes the namespace and every secret in it. <code>default</code> is refused.</p>
+
+  <h2 id="get-stats">Stats</h2>
+  <div class="endpoint"><span class="method get">GET</span><code>/stats</code><span class="auth">root</span></div>
+<pre data-title="response · 200" class="out"><code class="language-json">{
+  "total_secrets": 24,
+  "total_namespaces": 4,
+  "rotated_secrets": 9,
+  "total_tokens": 8,
+  "active_tokens": 6,
+  "revoked_tokens": 2,
+  "secrets_by_namespace": [{ "namespace": "production", "count": 11 }],
+  "tokens_by_month": [{ "month": "2026-11", "count": 3 }]
+}</code></pre>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVA SDK
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="sdk-spring-boot" data-group="Java SDK" data-title="Spring Boot starter" data-desc="Inject Rune secrets as Spring properties.">
+  <h1>Spring Boot starter</h1>
+  <p class="lede"><code>rune-spring-boot-starter</code> fetches every secret in a namespace at startup and exposes them as Spring properties — before any of your beans are created.</p>
+
+  <h2>Install</h2>
+  <div class="code-group">
+<pre data-tab="Maven"><code class="language-markup">&lt;dependency&gt;
+  &lt;groupId&gt;io.rune&lt;/groupId&gt;
+  &lt;artifactId&gt;rune-spring-boot-starter&lt;/artifactId&gt;
+  &lt;version&gt;0.1.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<pre data-tab="Gradle"><code class="language-groovy">dependencies {
+    implementation 'io.rune:rune-spring-boot-starter:0.1.0'
+}</code></pre>
+  </div>
+  <p>Java 17+, Spring Boot 3. No extra HTTP or JSON libraries — it uses <code>java.net.http</code>.</p>
+
+  <h2>Configure</h2>
+<pre data-title="application.yml"><code class="language-yaml">rune:
+  url: http://localhost:2710
+  token: ${RUNE_TOKEN}
+  namespace: production
+  fail-fast: true</code></pre>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>rune.url</code><span class="type">string</span><span class="req">required</span></div><p>Base URL of <code>rune-server</code>.</p></div>
+    <div class="param"><div class="p-head"><code>rune.token</code><span class="type">string</span><span class="req">required</span></div><p>A token with <code>read</code> on the namespace. Prefer a <a href="#/service-identities">system token</a> — it reads while sealed.</p></div>
+    <div class="param"><div class="p-head"><code>rune.namespace</code><span class="type">string</span><span class="def">default: default</span></div><p>Namespace to load.</p></div>
+    <div class="param"><div class="p-head"><code>rune.fail-fast</code><span class="type">boolean</span><span class="def">default: true</span></div><p>Fail startup if Rune is unreachable or misconfigured. With <code>false</code>, a warning is logged and the app starts without Rune properties.</p></div>
+    <div class="param"><div class="p-head"><code>rune.enabled</code><span class="type">boolean</span><span class="def">default: true</span></div><p>Turn the starter off entirely — handy for tests.</p></div>
+  </div>
+  <div class="callout warn"><p>Don't commit the token. Pass it through an environment variable, as above.</p></div>
+
+  <h2>Use secrets as properties</h2>
+  <p>Each secret becomes <code>rune.&lt;key&gt;</code>, added as the highest-precedence property source:</p>
+<pre data-title="DataSourceConfig.java"><code class="language-java">@Configuration
+class DataSourceConfig {
+
+    @Value("${rune.db-password}")
+    private String dbPassword;
+
+}</code></pre>
+<pre data-title="application.yml"><code class="language-yaml">spring:
+  datasource:
+    password: ${rune.db-password}</code></pre>
+
+  <h2>Use <code>RuneClient</code></h2>
+  <p>When both <code>rune.url</code> and <code>rune.token</code> are set, a <code>RuneClient</code> bean is available for runtime lookups:</p>
+<pre data-title="PaymentsService.java"><code class="language-java">@Service
+class PaymentsService {
+
+    private final RuneClient rune;
+
+    PaymentsService(RuneClient rune) {
+        this.rune = rune;
+    }
+
+    String stripeKey() {
+        return rune.getSecret("production", "stripe-key");
+    }
+
+    List&lt;String&gt; keys() {
+        return rune.listKeys("production");
+    }
+}</code></pre>
+  <table class="ref">
+    <thead><tr><th>Method</th><th>Calls</th></tr></thead>
+    <tbody>
+      <tr><td><code>String getSecret(String namespace, String key)</code></td><td><code>GET /secret/get</code></td></tr>
+      <tr><td><code>List&lt;String&gt; listKeys(String namespace)</code></td><td><code>GET /secret/list</code></td></tr>
+    </tbody>
+  </table>
+  <p>Non-200 responses and connection failures throw <code>RuneException</code>.</p>
+
+  <h2>How it works</h2>
+  <ol class="steps compact">
+    <li><h3>Spring loads <code>application.yml</code></h3><p>Including <code>rune.*</code>.</p></li>
+    <li><h3><code>RuneEnvironmentPostProcessor</code> runs</h3><p>Before any bean is created, it lists and fetches the namespace's secrets.</p></li>
+    <li><h3>A <code>rune</code> property source is added first</h3><p>So <code>${rune.&lt;key&gt;}</code> wins over everything else.</p></li>
+    <li><h3>Your beans start</h3><p>With secrets in hand — nothing on disk, nothing in git.</p></li>
+  </ol>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     KUBERNETES
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="k8s-preview" data-group="Kubernetes" data-title="Coming next" data-desc="Kubernetes secret mapping and the auto secrets injector.">
+  <h1>Kubernetes <span class="badge-next">next release</span></h1>
+  <p class="lede">The next release brings Rune to your cluster. Two pieces are in the works.</p>
+  <div class="cards">
+    <div class="card static"><span class="card-ico" data-i="k8s"></span><b>Kubernetes secret mapping</b><span>Map Rune namespaces and keys to Kubernetes, so workloads get their secrets from Rune without copy-pasting into manifests.</span></div>
+    <div class="card static"><span class="card-ico" data-i="inject"></span><b>Auto secrets injector</b><span>Have secrets delivered to your pods automatically when they start.</span></div>
+  </div>
+  <div class="callout note"><p>Want early access or have a setup you'd like supported? Say so on <a href="https://github.com/runelock-io/rune/issues" target="_blank" rel="noopener">GitHub issues</a>.</p></div>
+  <p>Until then: run <code>rune-server</code> somewhere your pods can reach, give each service a <a href="#/service-identities">system token</a>, and read secrets at startup with the <a href="#/sdk-spring-boot">Java SDK</a> or the <a href="#/api-secrets">HTTP API</a>.</p>
+</article>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HELP
+     ═══════════════════════════════════════════════════════════ -->
+
+<article class="doc" data-slug="troubleshooting" data-group="Help" data-title="Troubleshooting" data-desc="Common errors and how to fix them.">
+  <h1>Troubleshooting</h1>
+  <p class="lede">The messages you're most likely to meet, and what they mean.</p>
+
+  <details class="faq" open><summary><code>[AUTHENTICATION FAILED] Please login first using: rune login &lt;token&gt;</code></summary>
+    <p>The CLI has no saved token. Run <code>rune login &lt;token&gt;</code>.</p></details>
+  <details class="faq"><summary><code>invalid token</code> / <code>token has been revoked</code></summary>
+    <p>The saved token doesn't exist (typo?) or was revoked. Log in with a valid one; root can check with <code>rune token list</code>.</p></details>
+  <details class="faq"><summary><code>[OPERATION DENIED]: Vault is Sealed</code></summary>
+    <p>The server restarted or someone ran <code>rune seal</code>. Run <code>rune unseal</code>.</p></details>
+  <details class="faq"><summary><code>error: Invalid Passphrase</code></summary>
+    <p>Wrong passphrase. There's no reset — if it's truly lost, the vault can't be decrypted.</p></details>
+  <details class="faq"><summary><code>[AUTHORIZATION DENIED]: Token cannot … this namespace</code></summary>
+    <p>The token lacks that permission for that namespace. Check the <code>-n</code> flag (no flag means <code>default</code>), or create a token with the right scope.</p></details>
+  <details class="faq"><summary><code>[AUTHORIZATION DENIED]: Root Access Required</code></summary>
+    <p>Namespace management, token management and stats need the root token.</p></details>
+  <details class="faq"><summary><code>[OPERATION DENIED]: Namespace does not exist</code></summary>
+    <p>Create it first: <code>rune namespace create &lt;name&gt;</code>.</p></details>
+  <details class="faq"><summary><code>! Detected '$' in value. Use quotes to avoid shell expansion.</code></summary>
+    <p>Your shell may have expanded part of the value before Rune saw it. Wrap it in single quotes.</p></details>
+  <details class="faq"><summary>connection refused</summary>
+    <p><code>rune-server</code> isn't running, or something else holds port 2710. Start it and check the banner.</p></details>
+  <details class="faq"><summary>Spring app fails at startup with <code>[rune] rune.url and rune.token must be configured</code></summary>
+    <p>Set both properties, or set <code>rune.fail-fast: false</code> / <code>rune.enabled: false</code> for environments without Rune.</p></details>
+</article>
+
+<article class="doc" data-slug="roadmap" data-group="Help" data-title="Roadmap" data-desc="What's shipped, what's next.">
+  <h1>Roadmap</h1>
+  <div class="rm-mini">
+    <div><h3><span class="rm-dot done"></span>Available in 1.0.0-RC</h3>
+      <ul><li>Secret CRUD &amp; encryption</li><li>Seal / unseal</li><li>Namespaces</li><li>Token authentication &amp; namespace-bound tokens</li><li>Token RBAC</li><li>Token expiration</li><li>Audit logging</li><li>Rotation — manual &amp; automated</li><li>Versioning &amp; version-aware deletion</li><li>Application / service identities</li><li>Web UI</li><li>Java SDK (Maven)</li></ul></div>
+    <div><h3><span class="rm-dot next"></span>Next release</h3>
+      <ul><li><b>Kubernetes secret mapping</b></li><li><b>Auto secrets injector</b></li><li>Secret rollback</li><li>Rotation policies</li></ul></div>
+    <div><h3><span class="rm-dot future"></span>Future</h3>
+      <ul><li>Dynamic secrets</li><li>Remote storage</li><li>High availability</li></ul></div>
+  </div>
+  <p>Follow along on <a href="https://github.com/runelock-io/rune" target="_blank" rel="noopener">GitHub</a>. Rune is licensed under Apache 2.0.</p>
+</article>
+
+    </div><!-- /d-content -->
+
+    <nav class="d-pager" id="dPager" aria-label="Previous and next page"></nav>
+
+    <div class="d-feedback" id="dFeedback">
+      <span>Was this page helpful?</span>
+      <button type="button" data-v="yes">Yes</button>
+      <button type="button" data-v="no">No</button>
+      <a id="dEdit" href="https://github.com/runelock-io/rune" target="_blank" rel="noopener">Suggest an edit on GitHub →</a>
+    </div>
+
+    <footer class="d-foot">
+      <img src="assets/logo-icon.png" alt="" width="14" height="16" />
+      <span>Rune · open source · Apache 2.0</span>
+      <a href="index.html">rune home</a>
+    </footer>
+  </main>
+
+  <aside class="d-toc" id="dToc" aria-label="On this page">
+    <p class="d-toc-h">On this page</p>
+    <ul id="dTocList"></ul>
+    <div class="d-toc-card">
+      <p>Try it without installing anything.</p>
+      <a href="index.html#demo">Open the live demo →</a>
+    </div>
+  </aside>
+</div>
+
+<!-- ═════════════════════════ SEARCH ═════════════════════════ -->
+<div class="d-modal" id="dModal" role="dialog" aria-modal="true" aria-label="Search documentation" hidden>
+  <div class="d-modal-box">
+    <div class="d-modal-in">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="dQuery" type="search" placeholder="Search commands, endpoints, concepts…" autocomplete="off" spellcheck="false" />
+      <kbd>esc</kbd>
+    </div>
+    <ul class="d-results" id="dResults" role="listbox"></ul>
+    <div class="d-modal-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> open</span></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-groovy.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-properties.min.js" defer></script>
+<script src="docs.js" defer></script>
+</body>
+</html>

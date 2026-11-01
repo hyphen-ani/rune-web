@@ -143,7 +143,7 @@
         },
         tokens: [
           { id: 'root', name: 'root', value: hex(64), perms: { '*': PERMS }, type: 'root', at: ago(31), revoked: false },
-          { id: hex(8), name: 'payments-api', value: hex(64), perms: { production: ['read'] }, type: 'system', at: ago(12), revoked: false },
+          { id: 'stk_1730451299999999', name: 'payments-api', value: hex(64), perms: { production: ['read'] }, type: 'system', at: ago(12), revoked: false },
         ],
         audit: [],
       };
@@ -166,14 +166,15 @@
     unseal(actor) { this.state.sealed = false; this.log(actor, 'vault.unseal', '—', true); this.emit({ type: 'unseal' }); },
     put(actor, ns, key, value) {
       const bucket = this.state.ns[ns];
-      (bucket[key] ||= []).push({ value, at: new Date() });
+      bucket[key] = [{ value, at: new Date() }];          // real CLI: put (re)writes version 1
       this.log(actor, 'secret.put', `${ns}/${key}`, true);
       this.emit({ type: 'put', ns, key });
       return bucket[key].length;
     },
     rotate(actor, ns, key) {
-      const value = rand(20, 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!#%*');
-      this.state.ns[ns][key].push({ value, at: new Date(), rotated: true });
+      const value = rand(43, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_');   // 32 random bytes, base64url
+      const first = this.state.ns[ns][key][0];
+      this.state.ns[ns][key].push({ value, at: new Date(), created: first.created || first.at, rotated: true });
       this.log(actor, 'secret.rotate', `${ns}/${key}`, true);
       this.emit({ type: 'rotate', ns, key });
       return { value, version: this.state.ns[ns][key].length };
@@ -189,7 +190,8 @@
     createNs(actor, ns) { this.state.ns[ns] = {}; this.log(actor, 'namespace.create', ns, true); this.emit({ type: 'ns', ns }); },
     deleteNs(actor, ns) { delete this.state.ns[ns]; this.log(actor, 'namespace.delete', ns, true); this.emit({ type: 'ns-del', ns }); },
     createToken(actor, name, perms, type = 'user') {
-      const tok = { id: hex(8), name, value: hex(64), perms, type, at: new Date(), revoked: false };
+      const prefix = type === 'system' ? 'stk' : 'tkn';
+      const tok = { id: `${prefix}_${Date.now()}${String(Math.floor(Math.random() * 1e6)).padStart(6, '0')}`, name, value: hex(64), perms, type, at: new Date(), revoked: false };
       this.state.tokens.push(tok);
       this.log(actor, 'token.create', name, true);
       this.emit({ type: 'token', name });
@@ -259,9 +261,11 @@
 
   const mask = (v) => '•'.repeat(Math.min(16, Math.max(8, v.length)));
   const AUTH_FAIL = [err('[AUTHENTICATION FAILED] Please login first using: rune login &lt;token&gt;')];
-  const SEALED = [err('vault is sealed'), mut('  run <span class="hl">rune unseal</span> first — secrets stay encrypted until you do.')];
+  const SEALED = [err('[OPERATION DENIED]: Vault is Sealed'), mut('  run <span class="hl">rune unseal</span> first — secrets stay encrypted until you do.')];
   const nsMissing = (ns) => [err(`namespace '${esc(ns)}' not found`), mut('  try <span class="hl">rune namespace list</span>')];
-  const forbidden = (perm, ns) => [err(`[FORBIDDEN] token '${esc(Vault.state.session)}' has no '${perm}' permission on '${esc(ns)}'`), mut('  RBAC working as intended. log in with a token that does: <span class="hl">rune login root</span>')];
+  const VERB = { read: 'read from', write: 'write to', delete: 'delete from', rotate: 'rotate secrets in' };
+  const forbidden = (perm) => [err(`[AUTHORIZATION DENIED]: Token cannot ${VERB[perm]} this namespace`), mut(`  RBAC working as intended — '${esc(Vault.state.session)}' has no ${perm} here. try <span class="hl">rune login root</span>`)];
+  const ROOT_ONLY = [err('[AUTHORIZATION DENIED]: Root Access Required')];
 
   const BANNER = [
     ['acc', ' _ __ _   _ _ __   ___ '],
@@ -290,6 +294,7 @@
     '  <span class="acc">token     </span> <span class="mut">manage tokens (create, list, revoke)</span>',
     '',
     mut('  demo data lives in <span class="hl">production</span> and <span class="hl">staging</span>. -n picks the namespace.'),
+    mut('  full command reference → <a href="docs.html#/cli-overview">rune docs</a>'),
   ];
 
   function parsePermFlags(list) {
@@ -367,7 +372,7 @@
         if (!Vault.hasNs(ns)) return nsMissing(ns);
         if (!Vault.can(me, 'write', ns)) { Vault.deny(me, 'secret.put', `${ns}/${key}`); return forbidden('write', ns); }
         const v = Vault.put(me, ns, key, value);
-        return [ok('Secret stored successfully'), mut(`  ${esc(ns)}/${esc(key)} · v${v}${v > 1 ? ' · previous version kept' : ''}`)];
+        return [ok('Secret Stored Successfully'), mut(`  ${esc(ns)}/${esc(key)} · v1 · encrypted. (put on an existing key starts over at v1 — use rotate to keep history)`)];
       }
       case 'get': {
         const r = needSecret('read', 'secret.get'); if (r.e) return r.e;
@@ -377,9 +382,9 @@
         if (flags.version) {
           const n = parseInt(flags.version, 10);
           if (!s[n - 1]) return [err(`version ${esc(flags.version)} not found (latest: ${s.length})`)];
-          return [['acc', esc(s[n - 1].value)]];
+          return [`[SECRET] <span class="acc">${esc(s[n - 1].value)}</span>`, ok('Secret retrieved')];
         }
-        return [['acc', esc(s[s.length - 1].value)]];
+        return [`[SECRET] <span class="acc">${esc(s[s.length - 1].value)}</span>`, ok('Secret retrieved')];
       }
       case 'list': case 'ls': {
         if (!Vault.hasNs(ns)) return nsMissing(ns);
@@ -402,21 +407,21 @@
         Vault.read(me, ns, r.key);
         const line = '  <span class="mut">' + '─'.repeat(57) + '</span>';
         return ['', '  SECRET HISTORY', line, mut('  VERSION    CREATED                   ROTATED'), line,
-          ...s.map((x, i) => `  ${String(i + 1).padEnd(10)} ${iso(x.at).padEnd(25)} ${i === 0 ? '-' : iso(x.at)}`), line];
+          ...s.map((x, i) => `  ${String(i + 1).padEnd(10)} ${iso(x.created || s[0].at).padEnd(25)} ${i === 0 ? '-' : iso(x.at)}`), line];
       }
       case 'delete': case 'rm': {
         const r = needSecret('delete', 'secret.delete'); if (r.e) return r.e;
         if (!Vault.secret(ns, r.key)) return [err(`secret not found: ${esc(ns)}/${esc(r.key)}`)];
         const n = Vault.del(me, ns, r.key);
-        return [ok('Secret deleted'), mut(`  ${n} version${n > 1 ? 's' : ''} removed with it. nothing lingers.`)];
+        return [mut(`Are you sure you want to delete secret '${esc(r.key)}' (namespace: ${esc(ns)})? (y/N): y`), ok('Secret deleted'), mut(`  ${n} version${n > 1 ? 's' : ''} removed with it. nothing lingers.`)];
       }
       case 'namespace': case 'ns': {
         const action = pos[0];
         if (!action) return [mut('usage: rune namespace [create|list|delete]')];
+        if (!Vault.isRoot(me)) { Vault.deny(me, 'namespace.' + action, pos[1] || '—'); return ROOT_ONLY; }
         if (action === 'list' || action === 'ls') {
           return ['', 'Namespaces:', '', ...Object.keys(S.ns).map((n) => `[NAMESPACES] ${esc(n)}`)];
         }
-        if (!Vault.isRoot(me)) { Vault.deny(me, 'namespace.' + action, pos[1] || '—'); return [err(`[FORBIDDEN] namespace management needs the root token`)]; }
         const name = pos[1];
         if (action === 'create') {
           if (!name || !/^[a-z0-9][a-z0-9-_]*$/i.test(name)) return [err('accepts 1 arg(s): rune namespace create &lt;name&gt;')];
@@ -435,11 +440,11 @@
       case 'token': {
         const action = pos[0];
         if (!action) return [mut('usage: rune token [create|list|revoke]')];
+        if (!Vault.isRoot(me)) { Vault.deny(me, 'token.' + action, pos[1] || '—'); return ROOT_ONLY; }
         if (action === 'list' || action === 'ls') {
-          const rows = S.tokens.map((t) => `  ${t.id.padEnd(10)} ${esc(t.name).padEnd(14)} ${iso(t.at).padEnd(21)} ${t.type.padEnd(7)} ${t.revoked ? '<span class="err">revoked</span>' : '<span class="ok">active</span>'}`);
-          return ['', 'Tokens:', '', mut(`  ${'ID'.padEnd(10)} ${'NAME'.padEnd(14)} ${'CREATED AT'.padEnd(21)} ${'TYPE'.padEnd(7)} STATUS`), mut('  ' + '-'.repeat(64)), ...rows, ''];
+          const rows = S.tokens.map((t) => `  ${t.id.padEnd(22)} ${esc(t.name).padEnd(14)} ${iso(t.at).padEnd(21)} ${(t.type === 'system' ? 'system' : 'regular').padEnd(8)} ${t.revoked ? '<span class="err">revoked</span>' : '<span class="ok">active</span>'}`);
+          return ['', 'Tokens:', '', mut(`  ${'ID'.padEnd(22)} ${'NAME'.padEnd(14)} ${'CREATED AT'.padEnd(21)} ${'TYPE'.padEnd(8)} STATUS`), mut('  ' + '-'.repeat(76)), ...rows, ''];
         }
-        if (!Vault.isRoot(me)) { Vault.deny(me, 'token.' + action, pos[1] || '—'); return [err(`[FORBIDDEN] token management needs the root token`)]; }
         if (action === 'create') {
           const name = pos[1] || flags.name || 'default';
           if (!flags.nsList.length) return [err('[INVALID]: Provide at least one namespace with -n (e.g. -n default:read,write)')];
@@ -775,7 +780,7 @@
     const key = ['jwt-secret', 'openai-key', 'webhook-signing', 's3-access-key', 'sentry-dsn'][newCount++ % 5] + (newCount > 5 ? '-' + newCount : '');
     Vault.put(UI_ACTOR, ui.ns, key, rand(22));
     toast(`✔ created ${key} · v1`);
-    tlog(`rune put ${key} •••••• -n ${ui.ns}`, [ok('Secret stored successfully')]);
+    tlog(`rune put ${key} •••••• -n ${ui.ns}`, [ok('Secret Stored Successfully')]);
   });
   const toggleSeal = () => {
     const was = Vault.state.sealed;
