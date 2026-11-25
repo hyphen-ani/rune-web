@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Docs — Rune</title>
-<meta name="description" content="Rune documentation: install, the CLI, rune-server, the Web UI, token RBAC, the HTTP API and the Java SDK." />
+<meta name="description" content="Rune documentation: install, the CLI, rune-server, the Web UI, token RBAC, the HTTP API, the Java SDK and the Kubernetes operator." />
 <meta name="theme-color" content="#ffffff" />
 <link rel="icon" type="image/png" href="assets/logo-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +37,7 @@
       <a href="index.html#demo">Live demo</a>
       <a href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener">Releases</a>
     </nav>
-    <a class="ver-pill" href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener"><span class="pulse"></span>v1.0.0-RC</a>
+    <a class="ver-pill" href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener"><span class="pulse"></span>v1.0.1-RC</a>
     <a class="btn btn-ink btn-sm d-gh" href="https://github.com/runelock-io/rune" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
       <span>GitHub</span>
@@ -83,7 +83,8 @@
     <a class="card" href="#/web-ui"><span class="card-ico" data-i="window"></span><b>Web UI</b><span>The same vault in your browser, served by rune-server at <code>/ui/</code>.</span></a>
     <a class="card" href="#/sdk-spring-boot"><span class="card-ico" data-i="java"></span><b>Java SDK</b><span>A Spring Boot starter that turns secrets into <code>${rune.*}</code> properties.</span></a>
     <a class="card" href="#/api-overview"><span class="card-ico" data-i="api"></span><b>HTTP API</b><span>Everything the CLI and UI do, over plain HTTP with a bearer token.</span></a>
-    <a class="card" href="#/k8s-preview"><span class="card-ico" data-i="k8s"></span><b>Kubernetes <em>next</em></b><span>Secret mapping and an auto injector, landing in the next release.</span></a>
+    <a class="card" href="#/k8s-operator"><span class="card-ico" data-i="k8s"></span><b>Kubernetes Operator</b><span>Sync secrets from Rune namespaces into native Kubernetes Secrets automatically.</span></a>
+    <a class="card" href="#/multi-dev-auth"><span class="card-ico" data-i="user"></span><b>Multi-Developer Auth</b><span>Username and password accounts with scoped permissions — no shared passphrase.</span></a>
   </div>
 
   <h2>Why Rune?</h2>
@@ -172,7 +173,7 @@ rune token create payments-api -n production:read</code></pre>
   <p class="lede">Rune ships as two binaries: <code>rune</code> (the CLI) and <code>rune-server</code> (the vault, API and Web UI). Both are built for <b>darwin</b> and <b>linux</b> on <b>amd64</b> and <b>arm64</b>.</p>
 
   <h2>Install script</h2>
-  <p>Recommended. Downloads the <code>v1.0.0-RC</code> release for your platform and moves both binaries to <code>/usr/local/bin</code> (uses <code>sudo</code>).</p>
+  <p>Recommended. Downloads the <code>v1.0.1-RC</code> release for your platform and moves both binaries to <code>/usr/local/bin</code> (uses <code>sudo</code>).</p>
   <div class="code-group">
 <pre data-tab="macOS"><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/runelock-io/rune/main/scripts/install.sh | sh</code></pre>
 <pre data-tab="Linux"><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/runelock-io/rune/main/scripts/install.sh | sh</code></pre>
@@ -190,7 +191,7 @@ Run:
 
   <h2>Release binaries</h2>
   <p>Grab them yourself from <a href="https://github.com/runelock-io/rune/releases" target="_blank" rel="noopener">GitHub Releases</a>. Assets are named <code>rune_&lt;os&gt;_&lt;arch&gt;</code> and <code>rune-server_&lt;os&gt;_&lt;arch&gt;</code>.</p>
-<pre data-title="terminal"><code class="language-bash">VERSION=v1.0.0-RC OS=darwin ARCH=arm64   # OS: darwin|linux  ARCH: amd64|arm64
+<pre data-title="terminal"><code class="language-bash">VERSION=v1.0.1-RC OS=darwin ARCH=arm64   # OS: darwin|linux  ARCH: amd64|arm64
 BASE=https://github.com/runelock-io/rune/releases/download/$VERSION
 
 curl -L $BASE/rune_${OS}_${ARCH} -o rune
@@ -217,7 +218,7 @@ make install        # builds ui/, then bin/rune and bin/rune-server, copies to /
   <div class="callout note"><p><b>Not yet.</b> A Homebrew formula is on the way. Until then, the install script is one line.</p></div>
 
   <h2>Verify</h2>
-<pre data-title="terminal"><code class="language-bash">rune --version      # rune v1.0.0-RC
+<pre data-title="terminal"><code class="language-bash">rune --version      # rune v1.0.1-RC
 rune                # prints the banner and command list</code></pre>
 
   <h2>Uninstall</h2>
@@ -299,6 +300,12 @@ rm -rf ~/.rune      # ⚠ deletes the vault database and your saved CLI token</c
     </tbody>
   </table>
 
+  <h2>Auto-unseal</h2>
+  <p>For server deployments where typing a passphrase on restart isn't practical, set <code>RUNE_UNSEAL_PASSPHRASE</code> in the environment. The server derives the key automatically on startup — the vault is unsealed before the first request arrives.</p>
+<pre data-title="systemd / .env"><code class="language-bash">RUNE_UNSEAL_PASSPHRASE=your-passphrase rune-server</code></pre>
+  <div class="callout warn"><p>Auto-unseal trades manual confirmation for convenience. Protect the passphrase like any other secret: use a system secret store or a restricted environment variable — never a plain text file on the same disk as the vault.</p></div>
+  <p>Auto-unseal does not change the cryptography. The same Argon2id-derived key is used; the passphrase input is just automated. You can still seal manually with <code>rune seal</code> and the vault will remain sealed until you restart or unseal again.</p>
+
   <div class="callout tip"><p>Seal the vault whenever you step away from a shared machine. It costs one command to get back: <code>rune unseal</code>.</p></div>
 </article>
 
@@ -364,9 +371,16 @@ rune namespace delete staging      # asks for confirmation</code></pre>
   <p>The new value is 32 cryptographically random bytes, base64url-encoded (43 characters). Rotating requires the <code>rotate</code> permission on the namespace.</p>
   <div class="callout warn"><p>Rotation changes the value <em>in Rune</em>. If the secret is also a password inside another system (a database user, an API provider), update it there too — or read it from Rune at startup so your app always has the current one.</p></div>
 
-  <h2>Automated rotation</h2>
-  <p>Rune can rotate secrets for you on a schedule, so long-lived credentials don't stay long-lived. Every automated rotation is a normal rotation: a new version, the old one kept, and an entry in the <a href="#/audit-logging">audit log</a>.</p>
-  <div class="callout note" data-todo="automated-rotation-syntax"><p>The configuration reference for automated rotation is being added to these docs. Rotation <em>policies</em> — rules per namespace — are coming in the next release.</p></div>
+  <h2>TTL-based auto-rotation</h2>
+  <p>Assign a TTL to any secret with <code>rune set-ttl</code>. When the TTL expires the vault's background scheduler rotates the secret automatically — a new version is generated, the old one stays in history, and an entry is written to the <a href="#/audit-logging">audit log</a>.</p>
+<pre data-title="usage"><code class="language-bash">rune set-ttl &lt;key&gt; &lt;duration&gt; [-n namespace]</code></pre>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>duration</code><span class="type">string</span><span class="req">required</span></div><p>How long between rotations. Accepts <code>s</code> (seconds), <code>m</code> (minutes), <code>h</code> (hours), <code>d</code> (days). Examples: <code>30s</code>, <code>1h</code>, <code>7d</code>, <code>90d</code>.</p></div>
+  </div>
+<pre data-title="terminal"><code class="language-bash">rune set-ttl db-password 7d -n production</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ TTL set — db-password will rotate every 7d</code></pre>
+  <div class="callout warn"><p>Auto-rotation changes the value <em>in Rune</em>. Make sure your application reads the secret at startup (or via the SDK) rather than caching it, so it picks up the new value after each rotation.</p></div>
+  <p>To remove a TTL, run <code>rune set-ttl &lt;key&gt; none</code>. Manual rotation with <code>rune rotate</code> resets the timer.</p>
 </article>
 
 <article class="doc" data-slug="tokens-rbac" data-group="Concepts" data-title="Tokens &amp; RBAC" data-desc="Root token, scoped tokens and per-namespace permissions.">
@@ -456,6 +470,38 @@ rune token revoke tkn_1730451234567890</code></pre>
     <li>Long-lived service tokens can still be revoked at any time with <code>rune token revoke</code>.</li>
   </ul>
   <div class="callout note" data-todo="token-expiration-syntax"><p>The flag reference for setting a token's lifetime is being added to these docs.</p></div>
+</article>
+
+<article class="doc" data-slug="multi-dev-auth" data-group="Concepts" data-title="Multi-developer auth" data-desc="Username and password accounts for teams — no shared passphrase.">
+  <h1>Multi-developer auth</h1>
+  <p class="lede">Teams can share a Rune instance without anyone except the administrator ever seeing the master passphrase. Administrators create user accounts with username and password credentials; each user gets a session token scoped to their allowed namespaces.</p>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>An administrator creates a user account via the Web UI or the HTTP API, specifying which namespaces the user may access and with which permissions.</li>
+    <li>The developer logs in through the Web UI with their username and password.</li>
+    <li>Rune issues a scoped session token. The developer never touches the passphrase or the root token.</li>
+    <li>The session token expires after the configured duration; the developer logs in again to renew it.</li>
+  </ol>
+
+  <h2>Creating a user account</h2>
+<pre data-title="terminal — HTTP API"><code class="language-bash">curl -X POST http://localhost:2710/users/create \
+  -H "Authorization: Bearer $RUNE_ROOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "alice",
+    "password": "correct-horse-battery",
+    "namespaces": [
+      { "name": "production", "permissions": ["read"] },
+      { "name": "staging",    "permissions": ["read", "write"] }
+    ]
+  }'</code></pre>
+<pre data-title="response · 201" class="out"><code class="language-json">{ "id": "usr_1234", "username": "alice" }</code></pre>
+
+  <h2>Logging in</h2>
+  <p>Developers log in through the Web UI at <code>/ui/</code>. They are issued a session token valid only for their assigned namespaces — it works exactly like a scoped token from <code>rune token create</code>.</p>
+
+  <div class="callout tip"><p>Multi-developer auth does not replace the root token. Keep the root token in a secure location for administrative operations; hand out user accounts for day-to-day access.</p></div>
 </article>
 
 <article class="doc" data-slug="audit-logging" data-group="Concepts" data-title="Audit logging" data-desc="Who did what, when, with which token.">
@@ -726,6 +772,33 @@ rune get db-password -n production --version 2</code></pre>
 <pre data-title="output" class="out"><code class="language-text">✔ Token revoked</code></pre>
 </article>
 
+<article class="doc" data-slug="cli-set-ttl" data-group="CLI reference" data-title="rune set-ttl" data-desc="Assign a TTL for automatic rotation.">
+  <h1><code>rune set-ttl</code></h1>
+  <p class="lede">Set a time-to-live on a secret. When the TTL elapses the vault rotates the value automatically — a new version is generated and the old one stays in history.</p>
+<pre data-title="usage"><code class="language-bash">rune set-ttl &lt;key&gt; &lt;duration&gt; [-n namespace]</code></pre>
+  <div class="params">
+    <div class="param"><div class="p-head"><code>key</code><span class="type">arg</span><span class="req">required</span></div><p>The secret to assign a TTL to.</p></div>
+    <div class="param"><div class="p-head"><code>duration</code><span class="type">arg</span><span class="req">required</span></div><p>How long between automatic rotations. Use <code>s</code>, <code>m</code>, <code>h</code>, or <code>d</code> as a suffix — e.g. <code>30s</code>, <code>1h</code>, <code>7d</code>, <code>90d</code>. Pass <code>none</code> to clear an existing TTL.</p></div>
+    <div class="param"><div class="p-head"><code>-n, --namespace</code><span class="type">string</span><span class="def">default: default</span></div><p>Target namespace.</p></div>
+  </div>
+<pre data-title="terminal"><code class="language-bash">rune set-ttl db-password 7d -n production
+rune set-ttl api-key none -n production   # clear TTL</code></pre>
+<pre data-title="output" class="out"><code class="language-text">✔ TTL set — db-password will rotate every 7d</code></pre>
+  <div class="callout note"><p>Setting a TTL requires the <code>rotate</code> permission on the namespace. Rotation resets the timer — a manual <code>rune rotate</code> starts the interval fresh.</p></div>
+</article>
+
+<article class="doc" data-slug="cli-update" data-group="CLI reference" data-title="rune update" data-desc="Self-update the rune binary in place.">
+  <h1><code>rune update</code></h1>
+  <p class="lede">Check GitHub for a newer release and, if one exists, download the appropriate binary for your platform and replace the current installation atomically.</p>
+<pre data-title="terminal"><code class="language-bash">rune update</code></pre>
+<pre data-title="output · update available" class="out"><code class="language-text">Current version: v1.0.0-RC
+Latest version:  v1.0.1-RC
+Downloading rune v1.0.1-RC for darwin/arm64…
+✔ Updated to v1.0.1-RC</code></pre>
+<pre data-title="output · already current" class="out"><code class="language-text">✔ Already on the latest version (v1.0.1-RC)</code></pre>
+  <div class="callout note"><p><code>rune update</code> only updates the CLI binary. To update <code>rune-server</code>, stop the server, replace the binary, and restart. Future releases may add <code>rune-server update</code>.</p></div>
+</article>
+
 <!-- ═══════════════════════════════════════════════════════════
      SERVER & WEB UI
      ═══════════════════════════════════════════════════════════ -->
@@ -773,6 +846,15 @@ Restart=on-failure
 [Install]
 WantedBy=multi-user.target</code></pre>
   <div class="callout note"><p>Run the first start interactively — it needs a terminal to set the passphrase. After that the service can start unattended.</p></div>
+
+  <h2>Environment variables</h2>
+  <table class="ref">
+    <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>RUNE_UNSEAL_PASSPHRASE</code></td><td>Auto-unseal on startup. When set, the server derives the encryption key from this value and starts unsealed — no interactive passphrase screen. See <a href="#/seal-unseal">Auto-unseal</a>.</td></tr>
+      <tr><td><code>RUNE_SERVER</code></td><td>Override the server URL for the CLI (<code>http://localhost:2710</code> by default).</td></tr>
+    </tbody>
+  </table>
 
   <h2>Routes</h2>
   <table class="ref">
@@ -1099,15 +1181,40 @@ class PaymentsService {
      KUBERNETES
      ═══════════════════════════════════════════════════════════ -->
 
-<article class="doc" data-slug="k8s-preview" data-group="Kubernetes" data-title="Coming next" data-desc="Kubernetes secret mapping and the auto secrets injector.">
-  <h1>Kubernetes <span class="badge-next">next release</span></h1>
-  <p class="lede">The next release brings Rune to your cluster. Two pieces are in the works.</p>
-  <div class="cards">
-    <div class="card static"><span class="card-ico" data-i="k8s"></span><b>Kubernetes secret mapping</b><span>Map Rune namespaces and keys to Kubernetes, so workloads get their secrets from Rune without copy-pasting into manifests.</span></div>
-    <div class="card static"><span class="card-ico" data-i="inject"></span><b>Auto secrets injector</b><span>Have secrets delivered to your pods automatically when they start.</span></div>
-  </div>
-  <div class="callout note"><p>Want early access or have a setup you'd like supported? Say so on <a href="https://github.com/runelock-io/rune/issues" target="_blank" rel="noopener">GitHub issues</a>.</p></div>
-  <p>Until then: run <code>rune-server</code> somewhere your pods can reach, give each service a <a href="#/service-identities">system token</a>, and read secrets at startup with the <a href="#/sdk-spring-boot">Java SDK</a> or the <a href="#/api-secrets">HTTP API</a>.</p>
+<article class="doc" data-slug="k8s-operator" data-group="Kubernetes" data-title="Kubernetes Operator" data-desc="Automatically sync Rune secrets into native Kubernetes Secrets.">
+  <h1>Kubernetes Operator</h1>
+  <p class="lede"><code>rune-operator</code> watches your Rune namespaces and automatically pushes secrets into native Kubernetes Secrets — your workloads consume <code>secretKeyRef</code> as normal, with Rune as the source of truth.</p>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>You define a <b>mapping</b>: a Rune namespace + key → a Kubernetes Secret name + key.</li>
+    <li>The operator polls Rune on a configurable interval and updates the corresponding Kubernetes Secret whenever a rotation or write is detected.</li>
+    <li>Sync status is visible in the Web UI and via <code>GET /k8s/mappings</code>.</li>
+  </ol>
+
+  <h2>Creating a mapping</h2>
+  <p>Mappings can be managed through the Web UI or the HTTP API.</p>
+<pre data-title="terminal — HTTP API"><code class="language-bash">curl -X POST http://localhost:2710/k8s/mappings \
+  -H "Authorization: Bearer $RUNE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rune_namespace": "production",
+    "rune_key":       "db-password",
+    "k8s_secret":     "rune-secrets",
+    "k8s_key":        "DB_PASSWORD",
+    "refresh_interval": "60s"
+  }'</code></pre>
+<pre data-title="response · 201" class="out"><code class="language-json">{ "id": "map_1234", "status": "synced", "last_synced_at": "2026-11-25T10:00:00Z" }</code></pre>
+
+  <h2>Deployment</h2>
+  <p>Run <code>rune-operator</code> as a Deployment in the same cluster. It needs a Rune token with <code>read</code> permission on each mapped namespace and a Kubernetes <code>ServiceAccount</code> with permission to write Secrets.</p>
+
+  <div class="callout tip"><p>For development clusters (Kind, Minikube) you can run the operator as a plain process outside the cluster, pointed at <code>localhost:2710</code>.</p></div>
+
+  <h2>Deleting a mapping</h2>
+<pre data-title="terminal — HTTP API"><code class="language-bash">curl -X DELETE http://localhost:2710/k8s/mappings/map_1234 \
+  -H "Authorization: Bearer $RUNE_TOKEN"</code></pre>
+  <p>Deleting a mapping stops syncing. The Kubernetes Secret is left in place and must be deleted manually if no longer needed.</p>
 </article>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -1143,12 +1250,14 @@ class PaymentsService {
 <article class="doc" data-slug="roadmap" data-group="Help" data-title="Roadmap" data-desc="What's shipped, what's next.">
   <h1>Roadmap</h1>
   <div class="rm-mini">
-    <div><h3><span class="rm-dot done"></span>Available in 1.0.0-RC</h3>
-      <ul><li>Secret CRUD &amp; encryption</li><li>Seal / unseal</li><li>Namespaces</li><li>Token authentication &amp; namespace-bound tokens</li><li>Token RBAC</li><li>Token expiration</li><li>Audit logging</li><li>Rotation — manual &amp; automated</li><li>Versioning &amp; version-aware deletion</li><li>Application / service identities</li><li>Web UI</li><li>Java SDK (Maven)</li></ul></div>
+    <div><h3><span class="rm-dot done"></span>Shipped in v1.0.0-RC</h3>
+      <ul><li>Secret CRUD &amp; encryption</li><li>Seal / unseal</li><li>Namespaces</li><li>Token authentication &amp; namespace-bound tokens</li><li>Token RBAC</li><li>Token expiration</li><li>Audit logging</li><li>Rotation — manual</li><li>Versioning &amp; version-aware deletion</li><li>Application / service identities</li><li>Web UI</li><li>Java SDK (Maven)</li></ul></div>
+    <div><h3><span class="rm-dot done"></span>Shipped in v1.0.1-RC</h3>
+      <ul><li><b>Multi-developer auth</b> — username/password accounts, scoped sessions</li><li><b>Auto-unseal</b> — <code>RUNE_UNSEAL_PASSPHRASE</code> env var</li><li><b>Kubernetes Operator</b> — sync secrets to native K8s Secrets</li><li><b>TTL-based auto-rotation</b> — <code>rune set-ttl</code></li><li><b>CLI self-update</b> — <code>rune update</code></li></ul></div>
     <div><h3><span class="rm-dot next"></span>Next release</h3>
-      <ul><li><b>Kubernetes secret mapping</b></li><li><b>Auto secrets injector</b></li><li>Secret rollback</li><li>Rotation policies</li></ul></div>
+      <ul><li>Secret rollback</li><li>Rotation policies</li><li>Dynamic secrets</li></ul></div>
     <div><h3><span class="rm-dot future"></span>Future</h3>
-      <ul><li>Dynamic secrets</li><li>Remote storage</li><li>High availability</li></ul></div>
+      <ul><li>Remote storage</li><li>High availability</li></ul></div>
   </div>
   <p>Follow along on <a href="https://github.com/runelock-io/rune" target="_blank" rel="noopener">GitHub</a>. Rune is licensed under Apache 2.0.</p>
 </article>
